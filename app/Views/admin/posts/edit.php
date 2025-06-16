@@ -14,6 +14,25 @@
             class="form-control form-control-lg border-0 shadow-sm" name="title" placeholder="Enter a descriptive title"
             required>
     </div>
+    <div class="mb-4">
+        <?php $attributes = [
+            'class' => 'form-label text-sm fw-medium',
+
+        ];
+
+        echo form_label('Meta Description', 'meta_description', $attributes); ?>
+
+
+        <?php $data = [
+            'name' => 'meta_description',
+            'id' => 'meta_description',
+            'value' => esc($post['title']),
+            'maxlength' => '150',
+            'class' => 'form-control form-control-lg border-0 shadow-sm',
+            'placeholder' => 'Enter the meta description'
+        ];
+        echo form_input($data); ?>
+    </div>
 
     <div class="row mb-4">
         <div class="col-md-6">

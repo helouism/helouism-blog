@@ -54,12 +54,12 @@ class CategoryController extends BaseController
 
         $validation = $this->validate([
             'name' => [
-                'rules' => 'required|max_length[150]|is_unique[categories.name]|alpha_space',
+                'rules' => 'required|max_length[150]|is_unique[categories.name]|alpha_numeric_space',
                 'errors' => [
                     'required' => 'Category name required.',
                     'is_unique' => 'Category name already exists',
                     'max_length' => 'Category name too long',
-                    'alpha_space' => 'Category name should be a text'
+                    'alpha_numeric_space' => 'Category name should be a text'
                 ]
             ],
         ]);
@@ -107,7 +107,7 @@ class CategoryController extends BaseController
         //define validation
         $validation = $this->validate([
             'name' => [
-                'rules' => 'required|max_length[150]|string|is_unique[categories.name]',
+                'rules' => 'required|max_length[150]|string|is_unique[categories.name]|alpha_numeric_space',
                 'errors' => [
                     'required' => 'Category name required.',
                     'is_unique' => 'Category name already exists',

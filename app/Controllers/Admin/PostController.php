@@ -64,19 +64,28 @@ class PostController extends BaseController
 
         $validation = $this->validate([
             'title' => [
-                'rules' => 'required|alpha_space|max_length[150]',
+                'rules' => 'required|alpha_numeric_space|max_length[150]',
                 'errors' => [
                     'max_length' => 'Post Title too long',
                     'required' => 'Post Title Required',
-                    'alpha_space' => 'Post Title should be a text'
+                    'alpha_numeric_space' => 'Post Title should be a text'
 
                 ]
             ],
+            'meta_description' => [
+                'rules' => 'required|alpha_numeric_space|max_length[150]',
+                'errors' => [
+                    'required' => 'Meta Description Required',
+                    'alpha_numeric_space' => 'Meta Description should be a text'
+
+                ]
+            ],
+
             'thumbnail_caption' => [
-                'rules' => 'required|alpha_space',
+                'rules' => 'required|alpha_numeric_space',
                 'errors' => [
                     'required' => 'Post thumbnail caption Required',
-                    'alpha_space' => 'Post thumbnail caption should be a text'
+                    'alpha_numeric_space' => 'Post thumbnail caption should be a text'
 
                 ]
             ],
@@ -96,10 +105,10 @@ class PostController extends BaseController
                 ]
             ],
             'category_name' => [
-                'rules' => 'required|alpha_space|is_not_unique[categories.name]',
+                'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
                 'errors' => [
                     'required' => 'Post category required',
-                    'alpha_space' => 'Post category should be a text',
+                    'alpha_numeric_space' => 'Post category should be a text',
                     'is_not_unique' => 'Selected category does not exist'
                 ]
             ],
@@ -125,6 +134,7 @@ class PostController extends BaseController
             $this->postModel->insert([
                 'title' => $this->request->getPost('title'),
                 'slug' => $this->postModel->setSlug($this->request->getPost('title')),
+                'meta_description' => $this->request->getPost('meta_description'),
                 'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
                 'thumbnail_path' => $file_thumbnail->getName(),
                 'username' => $username,
@@ -172,11 +182,11 @@ class PostController extends BaseController
         // Validation rules
         $validation = $this->validate([
             'title' => [
-                'rules' => 'required|alpha_space|max_length[150]',
+                'rules' => 'required|alpha_numeric_space|max_length[150]',
                 'errors' => [
                     'max_length' => 'Post Title too long',
                     'required' => 'Post Title Required',
-                    'alpha_space' => 'Post Title should be a text'
+                    'alpha_numeric_space' => 'Post Title should be a text'
                 ]
             ],
             'content' => [
@@ -186,11 +196,19 @@ class PostController extends BaseController
                 ]
             ],
             'category_name' => [
-                'rules' => 'required|alpha_space|is_not_unique[categories.name]',
+                'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
                 'errors' => [
                     'required' => 'Post category required',
-                    'alpha_space' => 'Post category should be a text',
+                    'alpha_numeric_space' => 'Post category should be a text',
                     'is_not_unique' => 'Selected category does not exist'
+                ]
+            ],
+            'meta_description' => [
+                'rules' => 'required|alpha_numeric_space|max_length[150]',
+                'errors' => [
+                    'required' => 'Meta Description Required',
+                    'alpha_numeric_space' => 'Meta Description should be a text'
+
                 ]
             ],
             'thumbnail_caption' => [
@@ -198,7 +216,7 @@ class PostController extends BaseController
                 'errors' => [
                     'max_length' => 'Post thumbnail caption should be less than 200 characters',
                     'required' => 'Post thumbnail caption Required',
-                    'alpha_space' => 'Post thumbnail caption should be a text'
+                    'alpha_numeric_space' => 'Post thumbnail caption should be a text'
 
                 ]
             ],
@@ -219,6 +237,7 @@ class PostController extends BaseController
         // Get the new data
         $newData = [
             'title' => $this->request->getPost('title'),
+            'meta_description' => $this->request->getPost('meta_description'),
             'slug' => $this->postModel->setSlug($this->request->getPost('title')),
             'content' => $this->request->getPost('content'),
             'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),

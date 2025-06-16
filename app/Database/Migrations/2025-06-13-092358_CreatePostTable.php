@@ -25,6 +25,10 @@ class CreatePostTable extends Migration
                 'constraint' => 150,
                 'unique' => true,
             ],
+            'meta_description' => [
+                'type' => 'VARCHAR',
+                'constraint' => 150,
+            ],
             'thumbnail_path' => [
                 'type' => 'VARCHAR',
                 'constraint' => 200,  // Reduced

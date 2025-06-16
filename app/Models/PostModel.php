@@ -12,7 +12,7 @@ class PostModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    protected $allowedFields = ['title', 'slug', 'thumbnail_caption', 'thumbnail_path', 'content', 'username', 'category_name'];
+    protected $allowedFields = ['title', 'slug', 'meta_description', 'thumbnail_caption', 'thumbnail_path', 'content', 'username', 'category_name'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
