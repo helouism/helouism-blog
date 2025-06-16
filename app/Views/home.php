@@ -93,6 +93,8 @@
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
         border: none;
         box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+        background-color: rgb(251, 253, 255);
+
     }
 
     .post-card:hover {

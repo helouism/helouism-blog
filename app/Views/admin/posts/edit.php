@@ -190,6 +190,10 @@
         theme: 'snow',
         modules: {
             toolbar: [
+                ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+                ['blockquote', 'code-block'],
+                ['link', 'image', 'video', 'formula'],
+
                 [{ 'header': 1 }, { 'header': 2 }],               // custom button values
                 [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
                 [{ 'script': 'sub' }, { 'script': 'super' }],      // superscript/subscript

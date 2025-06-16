@@ -49,7 +49,7 @@
                         Useful links
                     </h6>
                     <p>
-                        <a href="<?= base_url('about') ?>" class="text-reset">About</a>
+                        <a href="https://helouis.github.io" class="text-reset">About</a>
                     </p>
 
                     </p>
