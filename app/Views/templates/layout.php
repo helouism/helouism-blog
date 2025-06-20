@@ -34,7 +34,7 @@
         .footer,
         .card,
         h1 {
-            font-family: Lora;
+            font-family: Lora, "Courier New", monospace;
         }
     </style>
     <script>
@@ -46,22 +46,28 @@
     </script>
 
 
-    <?php if (site_url('post/*')): ?>
+    <?php if (isset($post['title'])): ?>
         <!-- post.css -->
+
         <?php echo link_tag('assets/css/post.css'); ?>
+
     <?php endif ?>
 
 
-    <?php if (site_url('category/*')): ?>
+    <?php if (isset($category['name'])): ?>
         <!-- category.css -->
         <?php echo link_tag('assets/css/category.css'); ?>
     <?php endif ?>
 
 
-    <?php if (site_url('category-list')): ?>
+    <?php if ($title === 'All Categories'): ?>
         <!-- category-list.css -->
         <?php echo link_tag('assets/css/category-list.css'); ?>
     <?php endif ?>
+
+
+
+
 </head>
 
 <body>
