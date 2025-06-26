@@ -4,10 +4,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <meta name="author" content="Hendrik Louis Mahdi">
     <meta name="description"
         content="<?= isset($post['meta_description']) ? esc($post['meta_description']) : 'Blog website, technology, crypto' ?>">
-
+    <meta property="og:title" content="<?= esc($title) ?>" />
+    <meta property="og:url" content="<?= current_url() ?>" />
+    <meta property="og:description"
+        content="<?= isset($post['meta_description']) ? esc($post['meta_description']) : 'Blog website, technology, crypto' ?>">
 
     <title><?= esc($title) ?></title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
