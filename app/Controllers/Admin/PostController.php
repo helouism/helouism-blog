@@ -127,8 +127,21 @@ class PostController extends BaseController
         } else {
             $username = auth()->user()->username;
             $file_thumbnail = $this->request->getFile('thumbnail_path');
-            $thumbnail = $file_thumbnail->getRandomName();
-            $file_thumbnail->move(ROOTPATH . 'public/uploads/thumbnails', $thumbnail);
+
+            // Generate a random name with .webp extension
+            $thumbnail = pathinfo($file_thumbnail->getRandomName(), PATHINFO_FILENAME) . '.webp';
+
+            // First save the original upload
+            $file_thumbnail->move(FCPATH . 'uploads/thumbnails/temp', $file_thumbnail->getName());
+
+            // Convert to WebP
+            service('image')
+                ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $file_thumbnail->getName())
+                ->convert(IMAGETYPE_WEBP)
+                ->save(FCPATH . 'uploads/thumbnails/' . $thumbnail);
+
+            // Delete temporary file
+            unlink(FCPATH . 'uploads/thumbnails/temp/' . $file_thumbnail->getName());
 
             //insert data into database
             $this->postModel->insert([
@@ -136,7 +149,7 @@ class PostController extends BaseController
                 'slug' => $this->postModel->setSlug($this->request->getPost('title')),
                 'meta_description' => $this->request->getPost('meta_description'),
                 'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
-                'thumbnail_path' => $file_thumbnail->getName(),
+                'thumbnail_path' => $thumbnail,
                 'username' => $username,
                 'content' => $this->request->getPost('content'),
                 'category_name' => $this->request->getPost('category_name')
@@ -264,9 +277,21 @@ class PostController extends BaseController
                 unlink(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path']);
             }
 
-            // Save new thumbnail
-            $newName = $thumbnail->getRandomName();
-            $thumbnail->move(FCPATH . 'uploads/thumbnails', $newName);
+            // Generate a random name with .webp extension
+            $newName = pathinfo($thumbnail->getRandomName(), PATHINFO_FILENAME) . '.webp';
+
+            // First save the original upload
+            $thumbnail->move(FCPATH . 'uploads/thumbnails/temp', $thumbnail->getName());
+
+            // Convert to WebP
+            service('image')
+                ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $thumbnail->getName())
+                ->convert(IMAGETYPE_WEBP)
+                ->save(FCPATH . 'uploads/thumbnails/' . $newName);
+
+            // Delete temporary file
+            unlink(FCPATH . 'uploads/thumbnails/temp/' . $thumbnail->getName());
+
             $newData['thumbnail_path'] = $newName;
         }
 

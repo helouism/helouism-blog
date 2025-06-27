@@ -22,9 +22,9 @@
                     $wordsPerMinute = 200;
                     $wordCount = str_word_count(strip_tags($post['content']));
                     $minutes = ceil($wordCount / $wordsPerMinute);
-                    $est = $minutes . ' minute' . ($minutes == 1 ? '' : 's');
+                    $est = $minutes . ' min' . ($minutes == 1 ? '' : 's');
                     ?>
-                    <span><i class="bi bi-hourglass"></i>Reading time: <?php echo $est; ?> </span>
+                    <span><i class="bi bi-hourglass"></i><?php echo $est; ?></span>
                 </div>
             </div>
         </header> <!-- Featured Image -->
