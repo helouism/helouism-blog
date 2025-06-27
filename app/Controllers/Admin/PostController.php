@@ -69,7 +69,6 @@ class PostController extends BaseController
                     'max_length' => 'Post Title too long',
                     'required' => 'Post Title Required',
                     'alpha_numeric_space' => 'Post Title should be a text'
-
                 ]
             ],
             'meta_description' => [
@@ -77,27 +76,15 @@ class PostController extends BaseController
                 'errors' => [
                     'required' => 'Meta Description Required',
                     'alpha_numeric_space' => 'Meta Description should be a text'
-
                 ]
             ],
-
             'thumbnail_caption' => [
                 'rules' => 'required|alpha_numeric_space',
                 'errors' => [
                     'required' => 'Post thumbnail caption Required',
                     'alpha_numeric_space' => 'Post thumbnail caption should be a text'
-
                 ]
             ],
-            'thumbnail_path' => [
-                'rules' => 'uploaded[thumbnail_path]|is_image[thumbnail_path]|mime_in[thumbnail_path,image/jpg,image/jpeg,image/gif,image/png,image/webp]',
-                'errors' => [
-                    'uploaded' => 'Please select an image',
-                    'is_image' => 'The selected file is not a valid image',
-                    'mime_in' => 'The file must be an image (JPG, JPEG, PNG, GIF, or WEBP)'
-                ]
-            ],
-
             'content' => [
                 'rules' => 'required',
                 'errors' => [
@@ -112,38 +99,63 @@ class PostController extends BaseController
                     'is_not_unique' => 'Selected category does not exist'
                 ]
             ],
-
-
         ]);
 
-
         if (!$validation) {
-
-            //render view with error validation message
             session()->setFlashdata('error', $this->validator->listErrors());
-
             return redirect()->to(base_url('admin/posts/create'));
-
         } else {
             $username = auth()->user()->username;
-            $file_thumbnail = $this->request->getFile('thumbnail_path');
+            $thumbnail = null;
 
-            // Generate a random name with .webp extension
-            $thumbnail = pathinfo($file_thumbnail->getRandomName(), PATHINFO_FILENAME) . '.webp';
+            // Check if there's a temporary file from FilePond
+            $tempFileId = $this->request->getPost('temp_file_id');
 
-            // First save the original upload
-            $file_thumbnail->move(FCPATH . 'uploads/thumbnails/temp', $file_thumbnail->getName());
+            if ($tempFileId) {
+                $tempPath = FCPATH . 'uploads/temp/' . $tempFileId;
 
-            // Convert to WebP
-            service('image')
-                ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $file_thumbnail->getName())
-                ->convert(IMAGETYPE_WEBP)
-                ->save(FCPATH . 'uploads/thumbnails/' . $thumbnail);
+                if (file_exists($tempPath)) {
+                    // Generate final filename
+                    $thumbnail = $tempFileId;
 
-            // Delete temporary file
-            unlink(FCPATH . 'uploads/thumbnails/temp/' . $file_thumbnail->getName());
+                    // Move from temp to permanent location
+                    $finalPath = FCPATH . 'uploads/thumbnails/' . $thumbnail;
 
-            //insert data into database
+                    // Ensure thumbnails directory exists
+                    if (!is_dir(FCPATH . 'uploads/thumbnails/')) {
+                        mkdir(FCPATH . 'uploads/thumbnails/', 0755, true);
+                    }
+
+                    rename($tempPath, $finalPath);
+                }
+            } else {
+                // Fallback to traditional file upload (if FilePond fails)
+                $file_thumbnail = $this->request->getFile('thumbnail_path');
+
+                if ($file_thumbnail && $file_thumbnail->isValid() && !$file_thumbnail->hasMoved()) {
+                    // Generate a random name with .webp extension
+                    $thumbnail = pathinfo($file_thumbnail->getRandomName(), PATHINFO_FILENAME) . '.webp';
+
+                    // First save the original upload
+                    $file_thumbnail->move(FCPATH . 'uploads/thumbnails/temp', $file_thumbnail->getName());
+
+                    // Convert to WebP
+                    service('image')
+                        ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $file_thumbnail->getName())
+                        ->convert(IMAGETYPE_WEBP)
+                        ->save(FCPATH . 'uploads/thumbnails/' . $thumbnail);
+
+                    // Delete temporary file
+                    unlink(FCPATH . 'uploads/thumbnails/temp/' . $file_thumbnail->getName());
+                }
+            }
+
+            if (!$thumbnail) {
+                session()->setFlashdata('error', 'Please select a thumbnail image');
+                return redirect()->to(base_url('admin/posts/create'));
+            }
+
+            // Insert data into database
             $this->postModel->insert([
                 'title' => $this->request->getPost('title'),
                 'slug' => $this->postModel->setSlug($this->request->getPost('title')),
@@ -153,16 +165,11 @@ class PostController extends BaseController
                 'username' => $username,
                 'content' => $this->request->getPost('content'),
                 'category_name' => $this->request->getPost('category_name')
-
             ]);
 
-            //flash message
             session()->setFlashdata('success', 'New post added');
-
             return redirect()->to(base_url('admin/posts'));
         }
-
-
     }
 
     /**
@@ -192,7 +199,7 @@ class PostController extends BaseController
             return redirect()->to('admin/posts')->with('error', 'Post not found');
         }
 
-        // Validation rules
+        // Validation rules (thumbnail is optional for updates)
         $validation = $this->validate([
             'title' => [
                 'rules' => 'required|alpha_numeric_space|max_length[150]',
@@ -221,7 +228,6 @@ class PostController extends BaseController
                 'errors' => [
                     'required' => 'Meta Description Required',
                     'alpha_numeric_space' => 'Meta Description should be a text'
-
                 ]
             ],
             'thumbnail_caption' => [
@@ -230,15 +236,6 @@ class PostController extends BaseController
                     'max_length' => 'Post thumbnail caption should be less than 200 characters',
                     'required' => 'Post thumbnail caption Required',
                     'alpha_numeric_space' => 'Post thumbnail caption should be a text'
-
-                ]
-            ],
-            // Only validate thumbnail if one was uploaded
-            'thumbnail_path' => [
-                'rules' => 'permit_empty|is_image[thumbnail_path]|mime_in[thumbnail_path,image/jpg,image/jpeg,image/gif,image/png,image/webp]',
-                'errors' => [
-                    'is_image' => 'The selected file is not a valid image',
-                    'mime_in' => 'The file must be an image (JPG, JPEG, PNG, GIF, or WEBP)'
                 ]
             ]
         ]);
@@ -261,38 +258,66 @@ class PostController extends BaseController
         $changes = false;
 
         // Compare title, content and category
-        foreach (['title', 'content', 'category_name'] as $field) {
+        foreach (['title', 'content', 'category_name', 'meta_description', 'thumbnail_caption'] as $field) {
             if ($oldData[$field] !== $newData[$field]) {
                 $changes = true;
             }
         }
 
-        // Handle thumbnail upload
-        $thumbnail = $this->request->getFile('thumbnail_path');
-        if ($thumbnail && $thumbnail->isValid() && !$thumbnail->hasMoved()) {
-            $changes = true;
+        // Handle thumbnail upload from FilePond
+        $tempFileId = $this->request->getPost('temp_file_id');
 
-            // Delete old thumbnail if exists
-            if (!empty($oldData['thumbnail_path']) && file_exists(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path'])) {
-                unlink(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path']);
+        if ($tempFileId) {
+            $tempPath = FCPATH . 'uploads/temp/' . $tempFileId;
+
+            if (file_exists($tempPath)) {
+                $changes = true;
+
+                // Delete old thumbnail if exists
+                if (!empty($oldData['thumbnail_path']) && file_exists(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path'])) {
+                    unlink(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path']);
+                }
+
+                // Move from temp to permanent location
+                $newThumbnail = $tempFileId;
+                $finalPath = FCPATH . 'uploads/thumbnails/' . $newThumbnail;
+
+                // Ensure thumbnails directory exists
+                if (!is_dir(FCPATH . 'uploads/thumbnails/')) {
+                    mkdir(FCPATH . 'uploads/thumbnails/', 0755, true);
+                }
+
+                rename($tempPath, $finalPath);
+                $newData['thumbnail_path'] = $newThumbnail;
             }
+        } else {
+            // Fallback to traditional file upload (if FilePond fails)
+            $thumbnail = $this->request->getFile('thumbnail_path');
+            if ($thumbnail && $thumbnail->isValid() && !$thumbnail->hasMoved()) {
+                $changes = true;
 
-            // Generate a random name with .webp extension
-            $newName = pathinfo($thumbnail->getRandomName(), PATHINFO_FILENAME) . '.webp';
+                // Delete old thumbnail if exists
+                if (!empty($oldData['thumbnail_path']) && file_exists(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path'])) {
+                    unlink(FCPATH . 'uploads/thumbnails/' . $oldData['thumbnail_path']);
+                }
 
-            // First save the original upload
-            $thumbnail->move(FCPATH . 'uploads/thumbnails/temp', $thumbnail->getName());
+                // Generate a random name with .webp extension
+                $newName = pathinfo($thumbnail->getRandomName(), PATHINFO_FILENAME) . '.webp';
 
-            // Convert to WebP
-            service('image')
-                ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $thumbnail->getName())
-                ->convert(IMAGETYPE_WEBP)
-                ->save(FCPATH . 'uploads/thumbnails/' . $newName);
+                // First save the original upload
+                $thumbnail->move(FCPATH . 'uploads/thumbnails/temp', $thumbnail->getName());
 
-            // Delete temporary file
-            unlink(FCPATH . 'uploads/thumbnails/temp/' . $thumbnail->getName());
+                // Convert to WebP
+                service('image')
+                    ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $thumbnail->getName())
+                    ->convert(IMAGETYPE_WEBP)
+                    ->save(FCPATH . 'uploads/thumbnails/' . $newName);
 
-            $newData['thumbnail_path'] = $newName;
+                // Delete temporary file
+                unlink(FCPATH . 'uploads/thumbnails/temp/' . $thumbnail->getName());
+
+                $newData['thumbnail_path'] = $newName;
+            }
         }
 
         // If no changes detected
@@ -329,6 +354,35 @@ class PostController extends BaseController
 
             return redirect()->to(base_url('admin/posts'));
         }
+    }
+
+    public function uploadThumbnail()
+    {
+        $upload_status = '';
+        $file = $this->request->getFile('file');
+
+        if (!$file->isValid()) {
+            $upload_status = 'failed';
+            return $this->response->setJSON(['error' => 'Invalid file upload']);
+        }
+        $upload_status = 'success';
+
+        // Generate a random name with .webp extension
+        $thumbnail = pathinfo($file->getRandomName(), PATHINFO_FILENAME) . '.webp';
+
+        // First save the original upload
+        $file->move(FCPATH . 'uploads/thumbnails/temp', $file->getName());
+
+        // Convert to WebP
+        service('image')
+            ->withFile(FCPATH . 'uploads/thumbnails/temp/' . $file->getName())
+            ->convert(IMAGETYPE_WEBP)
+            ->save(FCPATH . 'uploads/thumbnails/' . $thumbnail);
+
+        // Delete temporary file
+        unlink(FCPATH . 'uploads/thumbnails/temp/' . $file->getName());
+        echo $upload_status;
+        return $this->response->setJSON(['path' => base_url('uploads/thumbnails/' . $thumbnail)]);
     }
 
 }

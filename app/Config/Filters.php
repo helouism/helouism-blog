@@ -53,6 +53,7 @@ class Filters extends BaseFilters
         'before' => [
             'forcehttps', // Force Global Secure Requests
             'pagecache',  // Web Page Caching
+
         ],
         'after' => [
             'pagecache',   // Web Page Caching
@@ -70,13 +71,20 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'honeypot',
-            'csrf',
+            'csrf' => [
+                'except' => [
+                    'admin/upload/process',
+                    'admin/upload/revert',
+                    'admin/upload/load',
+                ]
+            ],
             'invalidchars',
             'session' => ['except' => ['post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout', 'about']],
         ],
         'after' => [
             'honeypot',
             'secureheaders',
+
         ],
     ];
 

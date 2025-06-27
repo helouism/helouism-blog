@@ -23,6 +23,9 @@ $routes->group('admin', ['filter' => 'group:admin'], static function ($routes) {
     $routes->get('posts/edit/(:num)', 'Admin\PostController::edit/$1');
     $routes->post('posts/update/(:num)', 'Admin\PostController::update/$1');
     $routes->get('posts/delete/(:num)', 'Admin\PostController::delete/$1');
+    $routes->post('upload/process', 'Admin\UploadController::process');
+    $routes->delete('upload/revert', 'Admin\UploadController::revert');
+    $routes->get('upload/load', 'Admin\UploadController::load');
 
     // Categories
     $routes->get('categories', 'Admin\CategoryController::index');

@@ -47,7 +47,7 @@
             $data = [
                 'name' => 'thumbnail_path',
                 'id' => 'thumbnail_path',
-                'class' => 'form-control border-0 shadow-sm'
+                'class' => 'form-control border-0 shadow-sm filepond', // add filepond class
             ];
             echo form_upload($data); ?>
             <div class="form-text">Recommended size: 1200x630px</div>
@@ -204,6 +204,7 @@
 
 
 <?= $this->section('scripts') ?>
+
 <script>
     const quill = new Quill('#editor', {
         theme: 'snow',
@@ -230,8 +231,71 @@
             ]
         },
     });
+
     quill.on('text-change', function (delta, oldDelta, source) {
         document.querySelector("input[name='content']").value = quill.root.innerHTML;
+    });
+
+    // FilePond initialization with server configuration for edit
+    const pond = FilePond.create(document.querySelector('input[name="thumbnail_path"]'), {
+        allowImagePreview: true,
+        imagePreviewMaxHeight: 100,
+        labelIdle: 'Drag & Drop your image or <span class="filepond--label-action">Browse</span>',
+        acceptedFileTypes: ['image/*'],
+        maxFiles: 1,
+        maxFileSize: '5MB',
+        server: {
+            url: '<?= base_url('admin/upload') ?>',
+            process: '/process',
+            revert: '/revert',
+            load: '/load?id=',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                
+            }
+        },
+        // Load existing image if available
+        <?php if (!empty($post['thumbnail_path'])): ?>
+            files: [{
+                source: '<?= $post['thumbnail_path'] ?>',
+                options: {
+                    type: 'local'
+                }
+            }],
+        <?php endif; ?>
+        // Show upload progress
+        onprocessfile: (error, file) => {
+            if (error) {
+                console.error('Upload error:', error);
+                return;
+            }
+            console.log('File uploaded successfully:', file.serverId);
+        },
+        onprocessfileprogress: (file, progress) => {
+            console.log('Upload progress:', Math.round(progress * 100) + '%');
+        },
+        onprocessfilestart: (file) => {
+            console.log('Upload started for:', file.filename);
+        }
+    });
+
+    // Handle form submission
+    document.querySelector('form').addEventListener('submit', function (e) {
+        // Get FilePond files
+        const pondFiles = pond.getFiles();
+
+        if (pondFiles.length > 0 && pondFiles[0].serverId) {
+            // Get the server file ID (only for newly uploaded files)
+            const serverFileId = pondFiles[0].serverId;
+
+            // Create a hidden input with the server file ID
+            const hiddenInput = document.createElement('input');
+            hiddenInput.type = 'hidden';
+            hiddenInput.name = 'temp_file_id';
+            hiddenInput.value = serverFileId;
+
+            this.appendChild(hiddenInput);
+        }
     });
 </script>
 <?= $this->endSection() ?>
