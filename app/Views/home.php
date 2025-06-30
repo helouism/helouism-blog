@@ -1,7 +1,5 @@
 <?= $this->extend("templates/layout") ?>
 <?= $this->section("content") ?>
-
-
 <div class="row">
     <!-- Main Content Area -->
     <div class="col-lg-8">
@@ -18,7 +16,7 @@
                     <div class="row g-0">
                         <?php if ($post['thumbnail_path']): ?>
                             <div class="col-md-4">
-                                <img src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
+                                <img loading="lazy" src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
                                     class="img-fluid rounded-start h-100" alt="<?= esc($post['title']) ?>"
                                     style="object-fit: cover;">
                             </div>
@@ -85,77 +83,4 @@
         </div>
     </div>
 </div>
-
-
-<style>
-    /* Custom styles for the homepage */
-    .post-card {
-        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-        border: none;
-        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-        background-color: rgb(251, 253, 255);
-
-    }
-
-    .post-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    }
-
-    .categories-widget .card {
-        position: sticky;
-        top: 2rem;
-    }
-
-    .categories-list li:last-child {
-        margin-bottom: 0 !important;
-    }
-
-    .categories-list a {
-        color: #333;
-        padding: 0.5rem;
-        border-radius: 0.25rem;
-        transition: all 0.2s ease-in-out;
-    }
-
-    .categories-list a:hover {
-        background-color: #f8f9fa;
-        color: #0d6efd;
-    }
-
-    /* Dark mode support */
-    [data-bs-theme="dark"] .post-card {
-        background-color: rgb(42, 52, 67);
-    }
-
-    [data-bs-theme="dark"] .post-card .card-title a {
-        color: #e2e8f0 !important;
-    }
-
-    [data-bs-theme="dark"] .post-card .card-text {
-        color: #cbd5e0;
-    }
-
-    [data-bs-theme="dark"] .categories-list a {
-        color: #e2e8f0;
-    }
-
-    [data-bs-theme="dark"] .categories-list a:hover {
-        background-color: #4a5568;
-    }
-
-    [data-bs-theme="dark"] .categories-widget .card {
-        background-color: #2d3748;
-        border-color: #4a5568;
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 992px) {
-        .categories-widget .card {
-            position: static;
-            margin-top: 2rem;
-        }
-    }
-</style>
-
 <?= $this->endSection() ?>

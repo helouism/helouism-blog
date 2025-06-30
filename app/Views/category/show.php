@@ -30,8 +30,8 @@
             <div class="col-lg-4 col-md-6">
                 <div class="card h-100 shadow-sm hover-card">
                     <?php if ($post['thumbnail_path']): ?>
-                        <img src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>" class="card-img-top"
-                            alt="<?= esc($post['title']) ?>" style="height: 200px; object-fit: cover;">
+                        <img loading="lazy" src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
+                            class="card-img-top" alt="<?= esc($post['title']) ?>" style="height: 200px; object-fit: cover;">
                     <?php endif; ?>
                     <div class="card-body">
                         <h5 class="card-title">

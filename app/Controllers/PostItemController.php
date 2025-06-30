@@ -31,6 +31,7 @@ class PostItemController extends BaseController
         }
 
         $data = [
+
             'title' => $post['title'],
             'post' => $post,
 

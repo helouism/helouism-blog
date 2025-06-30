@@ -51,8 +51,6 @@
                     <p>
                         <a href="https://helouism.github.io" class="text-reset">About</a>
                     </p>
-
-                    </p>
                 </div>
                 <!-- Grid column -->
 
@@ -78,8 +76,7 @@
                         <a href="mailto:hendrikmahdi@gmail.com">hendrikmahdi@gmail.com</a>
 
                     </p>
-                    <p><i class="bi bi-whatsapp"></i> <a href="https://wa.me/6285156561231">085156561231</a> </p>
-
+                    <p> <i class="bi bi-whatsapp"></i> <a href="https://wa.me/6285156561231">085156561231</a> </p>
                 </div>
                 <!-- Grid column -->
             </div>

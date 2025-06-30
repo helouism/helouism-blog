@@ -62,7 +62,8 @@
                     <?php if ($post['updated_at'] !== $post['created_at']): ?>
                         <small class="text-muted">
 
-                            Last updated: <?= date('F j, Y G:i', strtotime($post['updated_at']) + (7 * 3600)) ?> Western
+                            Last updated: <?= esc(date('F j, Y G:i', strtotime($post['updated_at']) + (7 * 3600))) ?>
+                            Western
                             Indonesian Time
                         </small>
                     <?php endif; ?>
@@ -90,8 +91,6 @@
         </footer>
     </div>
 </div>
-
-
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>
 <script>

@@ -1,7 +1,5 @@
 <?= $this->extend("templates/layout") ?>
 <?= $this->section("content") ?>
-
-
 <!-- Page Header -->
 <div class="row mb-5">
     <div class="col-12 text-center">
@@ -9,7 +7,6 @@
 
     </div>
 </div>
-
 <!-- Categories Grid -->
 <div class="row g-4">
     <?php if (empty($categories)): ?>
@@ -30,7 +27,7 @@
                 <div class="card h-100 category-card hover-card">
                     <div class="category-image-wrapper">
                         <?php if ($latestPost && $latestPost['thumbnail_path']): ?>
-                            <img src="<?= base_url('uploads/thumbnails/' . $latestPost['thumbnail_path']) ?>"
+                            <img loading="lazy" src="<?= base_url('uploads/thumbnails/' . $latestPost['thumbnail_path']) ?>"
                                 class="card-img-top category-image" alt="<?= esc($category['name']) ?>">
                         <?php else: ?>
                             <div class="category-image-placeholder">
@@ -55,10 +52,4 @@
         <?php endforeach; ?>
     <?php endif; ?>
 </div>
-
-
-
-
-
-
 <?= $this->endSection() ?>
