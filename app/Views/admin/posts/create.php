@@ -1,5 +1,5 @@
-<?= $this->extend("templates/layout") ?>
-<?= $this->section("content") ?>
+<?= $this->extend("admin/templates/layout") ?>
+<?= $this->section("admin_content") ?>
 
 <div class="container py-4 max-w-4xl mx-auto">
     <div class="mb-4">
@@ -7,7 +7,7 @@
         <p class="text-muted small">Fill in the details below to create a new blog post</p>
     </div>
 
-    <?php echo form_open_multipart('admin/posts/store', ['class' => 'needs-validation']); ?>
+    <?php echo form_open_multipart('admin/posts/store', ['class' => 'needs-validation', 'id' => 'postForm']); ?>
     <div class="mb-4">
         <?php $attributes = [
             'class' => 'form-label text-sm fw-medium',
@@ -22,7 +22,7 @@
             'placeholder' => 'Enter a descriptive title',
             'maxlength' => '150',
             'class' => 'form-control form-control-lg border-0 shadow-sm',
-            'value' => '',
+            'value' => set_value('title'),
             'required' => true,
         ];
         echo form_input($data); ?>
@@ -39,7 +39,7 @@
         <?php $data = [
             'name' => 'meta_description',
             'id' => 'meta_description',
-            'value' => '',
+            'value' => set_value('meta_description'),
             'maxlength' => '150',
             'class' => 'form-control form-control-lg border-0 shadow-sm',
             'placeholder' => 'Enter the meta description'
@@ -58,6 +58,9 @@
 
             <div class="form-text">Recommended size: 1200x630px</div>
 
+            <!-- Hidden input for temp file ID -->
+            <input type="hidden" name="temp_file_id" id="temp_file_id" value="">
+
         </div>
 
         <div class="col-md-6">
@@ -67,7 +70,7 @@
             foreach ($categories as $category) {
                 $options[$category['name']] = $category['name'];
             }
-            echo form_dropdown('category_name', $options, '', 'class="form-control border-0 shadow-sm"');
+            echo form_dropdown('category_name', $options, set_value('category_name'), 'class="form-control border-0 shadow-sm"');
             ?>
         </div>
     </div>
@@ -81,7 +84,7 @@
             'placeholder' => 'Describe your featured image',
             'maxlength' => '200',
             'class' => 'form-control border-0 shadow-sm',
-            'value' => '',
+            'value' => set_value('thumbnail_caption'),
             'required' => true,
         ];
         echo form_input($data); ?>
@@ -238,49 +241,47 @@
         labelIdle: 'Drag & Drop your image or <span class="filepond--label-action">Browse</span>',
         acceptedFileTypes: ['image/*'],
         maxFiles: 1,
-        maxFileSize: '3MB',
+        maxFileSize: '5MB',
         server: {
             url: '<?= base_url('admin/upload') ?>',
             process: '/process',
             revert: '/revert',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                
             }
         },
-        // Show upload progress
         onprocessfile: (error, file) => {
             if (error) {
                 console.error('Upload error:', error);
                 return;
             }
             console.log('File uploaded successfully:', file.serverId);
+            // Set the temp file ID in the hidden input
+            document.getElementById('temp_file_id').value = file.serverId;
         },
-        onprocessfileprogress: (file, progress) => {
-            console.log('Upload progress:', Math.round(progress * 100) + '%');
+        onremovefile: (error, file) => {
+            // Clear the temp file ID when file is removed
+            document.getElementById('temp_file_id').value = '';
         },
         onprocessfilestart: (file) => {
             console.log('Upload started for:', file.filename);
+        },
+        onprocessfileprogress: (file, progress) => {
+            console.log('Upload progress:', Math.round(progress * 100) + '%');
         }
     });
 
-    // Handle form submission
-    document.querySelector('form').addEventListener('submit', function (e) {
-        // Get FilePond files
-        const pondFiles = pond.getFiles();
+    // Form validation before submission
+    document.getElementById('postForm').addEventListener('submit', function (e) {
+        const tempFileId = document.getElementById('temp_file_id').value;
 
-        if (pondFiles.length > 0) {
-            // Get the server file ID
-            const serverFileId = pondFiles[0].serverId;
-
-            // Create a hidden input with the server file ID
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'temp_file_id';
-            hiddenInput.value = serverFileId;
-
-            this.appendChild(hiddenInput);
+        if (!tempFileId) {
+            e.preventDefault();
+            alert('Please select a thumbnail image before submitting.');
+            return false;
         }
+
+        console.log('Submitting with temp_file_id:', tempFileId);
     });
 </script>
 <?= $this->endSection() ?>

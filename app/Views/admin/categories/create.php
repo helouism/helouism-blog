@@ -1,5 +1,6 @@
-<?= $this->extend("templates/layout") ?>
-<?= $this->section("content") ?>
+<?= $this->extend("admin/templates/layout") ?>
+<?= $this->section("admin_content") ?>
+
 
 <div class="container py-4 max-w-2xl mx-auto">
     <div class="mb-4">

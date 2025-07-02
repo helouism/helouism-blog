@@ -1,5 +1,6 @@
-<?= $this->extend("templates/layout") ?>
-<?= $this->section("content") ?>
+<?= $this->extend("admin/templates/layout") ?>
+<?= $this->section("admin_content") ?>
+
 
 <div class="container py-4 max-w-4xl mx-auto">
     <div class="mb-4">
@@ -50,6 +51,9 @@
                 'class' => 'form-control border-0 shadow-sm filepond', // add filepond class
             ];
             echo form_upload($data); ?>
+
+            <!-- Hidden input for temp file ID -->
+            <input type="hidden" name="temp_file_id" id="temp_file_id" value="">
             <div class="form-text">Recommended size: 1200x630px</div>
         </div>
 
@@ -248,34 +252,28 @@
             url: '<?= base_url('admin/upload') ?>',
             process: '/process',
             revert: '/revert',
-            load: '/load?id=',
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
-                
             }
         },
-        // Load existing image if available
-        <?php if (!empty($post['thumbnail_path'])): ?>
-            files: [{
-                source: '<?= $post['thumbnail_path'] ?>',
-                options: {
-                    type: 'local'
-                }
-            }],
-        <?php endif; ?>
-        // Show upload progress
         onprocessfile: (error, file) => {
             if (error) {
                 console.error('Upload error:', error);
                 return;
             }
             console.log('File uploaded successfully:', file.serverId);
+            // Set the temp file ID in the hidden input
+            document.getElementById('temp_file_id').value = file.serverId;
         },
-        onprocessfileprogress: (file, progress) => {
-            console.log('Upload progress:', Math.round(progress * 100) + '%');
+        onremovefile: (error, file) => {
+            // Clear the temp file ID when file is removed
+            document.getElementById('temp_file_id').value = '';
         },
         onprocessfilestart: (file) => {
             console.log('Upload started for:', file.filename);
+        },
+        onprocessfileprogress: (file, progress) => {
+            console.log('Upload progress:', Math.round(progress * 100) + '%');
         }
     });
 

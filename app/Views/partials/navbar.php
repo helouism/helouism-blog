@@ -17,26 +17,6 @@
                         href="<?php echo base_url("category-list") ?>">Categories</a>
                 </li>
 
-                <?php if (auth()->loggedIn()): ?>
-
-
-                    <li class="nav-item">
-                        <a class="nav-link <?= $title === 'Admin Dashboard' ? 'active' : '' ?>"
-                            href="<?php echo base_url("admin") ?>">Admin Dashboard</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= $title === 'Manage Posts' ? 'active' : '' ?>"
-                            href="<?php echo base_url("admin/posts") ?>">Manage Posts</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= $title === 'Manage Categories' ? 'active' : '' ?>"
-                            href="<?php echo base_url("admin/categories") ?>">Manage Categories</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?php echo base_url("logout") ?>">Logout</a>
-                    </li>
-
-                <?php endif ?>
             </ul>
 
         </div>

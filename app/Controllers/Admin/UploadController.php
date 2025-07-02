@@ -7,6 +7,9 @@ use CodeIgniter\HTTP\ResponseInterface;
 
 class UploadController extends BaseController
 {
+    /**
+     * Process file upload from FilePond
+     */
     public function process()
     {
         // Set JSON response header
@@ -20,28 +23,22 @@ class UploadController extends BaseController
                 'error' => 'No valid file uploaded'
             ]);
         }
+
+        // Validate file type and size
         $validation = $this->validate([
             'thumbnail_path' => [
-                'rules' => 'is_image[thumbnail_path]|mime_in[thumbnail_path,image/jpg,image/jpeg,image/gif,image/png,image/webp]',
+                'rules' => 'is_image[thumbnail_path]|mime_in[thumbnail_path,image/jpg,image/jpeg,image/gif,image/png,image/webp]|max_size[thumbnail_path,5120]',
                 'errors' => [
-
                     'is_image' => 'The selected file is not a valid image',
-                    'mime_in' => 'The file must be an image (JPG, JPEG, PNG, GIF, or WEBP)'
+                    'mime_in' => 'The file must be an image (JPG, JPEG, PNG, GIF, or WEBP)',
+                    'max_size' => 'File size must be less than 5MB'
                 ]
             ],
-
         ]);
-        // Validate file type
+
         if (!$validation) {
             return $this->response->setStatusCode(400)->setJSON([
-                'error' => 'File must be an image'
-            ]);
-        }
-
-        // Check file size (max 5MB)
-        if ($file->getSize() > 5242880) {
-            return $this->response->setStatusCode(400)->setJSON([
-                'error' => 'File size must be less than 5MB'
+                'error' => $this->validator->listErrors()
             ]);
         }
 
@@ -56,19 +53,20 @@ class UploadController extends BaseController
             }
 
             // Move file to temp location first
-            $file->move(FCPATH . 'uploads/temp/', $file->getName());
+            $originalTempName = uniqid() . '_original_' . $file->getName();
+            $file->move(FCPATH . 'uploads/temp/', $originalTempName);
 
-            // Convert to WebP and save
+            // Convert to WebP and save with final filename
             service('image')
-                ->withFile(FCPATH . 'uploads/temp/' . $file->getName())
+                ->withFile(FCPATH . 'uploads/temp/' . $originalTempName)
                 ->convert(IMAGETYPE_WEBP)
                 ->save($tempPath);
 
             // Delete original uploaded file
-            unlink(FCPATH . 'uploads/temp/' . $file->getName());
+            unlink(FCPATH . 'uploads/temp/' . $originalTempName);
 
-            // Return the temporary file identifier
-            return $this->response->setJSON($fileName);
+            // Return the temporary file identifier (this becomes the serverId for FilePond)
+            return $this->response->setBody($fileName);
 
         } catch (\Exception $e) {
             return $this->response->setStatusCode(500)->setJSON([
@@ -77,18 +75,19 @@ class UploadController extends BaseController
         }
     }
 
+    /**
+     * Revert/delete temporary file from FilePond
+     */
     public function revert()
     {
-
-
-
         $this->response->setContentType('application/json');
+
         // Get the file identifier from request body
         $fileId = file_get_contents('php://input');
 
         if (empty($fileId)) {
             return $this->response->setStatusCode(400)->setJSON([
-                'error' => '400 Error'
+                'error' => 'No file identifier provided'
             ]);
         }
 
@@ -97,16 +96,21 @@ class UploadController extends BaseController
         // Delete the temporary file
         if (file_exists($filePath)) {
             unlink($filePath);
+            return $this->response->setStatusCode(200)->setJSON([
+                'success' => 'File successfully removed'
+            ]);
         }
 
-        return $this->response->setStatusCode(200)->setJSON([
-            'success' => 'Successfully reverted',
+        return $this->response->setStatusCode(404)->setJSON([
+            'error' => 'File not found'
         ]);
     }
 
+    /**
+     * Load existing file for FilePond (for edit mode)
+     */
     public function load()
     {
-        // This is for loading existing files (optional)
         $fileId = $this->request->getGet('id');
 
         if (empty($fileId)) {
@@ -121,5 +125,33 @@ class UploadController extends BaseController
 
         // Return the file
         return $this->response->download($filePath, null);
+    }
+
+    /**
+     * Clean up old temporary files (optional - can be called via cron job)
+     */
+    public function cleanupTempFiles()
+    {
+        $tempDir = FCPATH . 'uploads/temp/';
+
+        if (!is_dir($tempDir)) {
+            return $this->response->setJSON(['message' => 'Temp directory does not exist']);
+        }
+
+        $files = glob($tempDir . '*');
+        $deletedCount = 0;
+        $currentTime = time();
+
+        // Delete files older than 1 hour
+        foreach ($files as $file) {
+            if (is_file($file) && ($currentTime - filemtime($file)) > 3600) {
+                unlink($file);
+                $deletedCount++;
+            }
+        }
+
+        return $this->response->setJSON([
+            'message' => "Cleaned up {$deletedCount} temporary files"
+        ]);
     }
 }

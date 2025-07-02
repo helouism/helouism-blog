@@ -1,7 +1,5 @@
 <?= $this->extend('templates/layout') ?>
-
 <?= $this->section('content') ?>
-
 <!-- Category Header -->
 <div class="row mb-5">
     <div class="col-12 text-center">
@@ -15,7 +13,6 @@
         </nav>
     </div>
 </div>
-
 <!-- Posts Grid -->
 <div class="row g-4">
     <?php if (empty($posts)): ?>
@@ -63,7 +60,4 @@
         <?= $pager->links('category_posts', 'bootstrap_pagination') ?>
     </div>
 </div>
-
-
-
 <?= $this->endSection() ?>
