@@ -2,7 +2,7 @@
 <?= $this->section("admin_content") ?>
 
 
-<div class="container py-4 max-w-2xl mx-auto">
+<div class="container py-4 max-w-2xl mx-auto py-4">
     <div class="mb-4">
         <h1 class="h3 mb-0 text-gray-800">Create Category</h1>
         <p class="text-muted small">Add a new category to organize your posts</p>
@@ -33,19 +33,6 @@
         border-radius: 0.5rem;
     }
 
-    [data-bs-theme="dark"] .form-control {
-        background-color: #2b3035;
-        border-color: #373b3e;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .text-muted {
-        color: #9ca3af !important;
-    }
-
-    [data-bs-theme="dark"] .text-gray-800 {
-        color: #e9ecef !important;
-    }
 
     .btn {
         padding: 0.75rem 1.5rem;

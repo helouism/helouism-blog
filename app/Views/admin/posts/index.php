@@ -1,6 +1,6 @@
 <?= $this->extend("admin/templates/layout") ?>
 <?= $this->section("admin_content") ?>
-<div class="container-fluid px-4">
+<div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="h3 mb-0">Blog Posts</h1>

@@ -1,7 +1,7 @@
 <?= $this->extend("admin/templates/layout") ?>
 <?= $this->section("admin_content") ?>
 
-<div class="container py-4 max-w-4xl mx-auto">
+<div class="container py-4 max-w-4xl mx-auto py-4">
     <div class="mb-4">
         <h1 class="h3 mb-0 text-gray-800">Create New Post</h1>
         <p class="text-muted small">Fill in the details below to create a new blog post</p>
@@ -143,23 +143,6 @@
         border: 1px solid #dee2e6;
     }
 
-    [data-bs-theme="dark"] .btn-light {
-        background-color: #2b3035;
-        border-color: #373b3e;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .btn-light:hover {
-        background-color: #373b3e;
-    }
-
-    [data-bs-theme="dark"] .text-muted {
-        color: #9ca3af !important;
-    }
-
-    [data-bs-theme="dark"] .text-gray-800 {
-        color: #e9ecef !important;
-    }
 
     .ql-toolbar.ql-snow {
         border: none !important;
@@ -172,28 +155,6 @@
     .ql-container.ql-snow {
         border: none !important;
         border-radius: 0 0 0.5rem 0.5rem;
-    }
-
-    [data-bs-theme="dark"] .ql-toolbar.ql-snow {
-        background-color: #2b3035;
-        border-bottom-color: #373b3e !important;
-    }
-
-    [data-bs-theme="dark"] .ql-snow .ql-stroke {
-        stroke: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .ql-snow .ql-fill {
-        fill: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .ql-container.ql-snow {
-        background-color: #2b3035;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .ql-editor.ql-blank::before {
-        color: #6c757d;
     }
 </style>
 

@@ -2,7 +2,7 @@
 <?= $this->section("admin_content") ?>
 
 
-<div class="container py-4 max-w-4xl mx-auto">
+<div class="container py-4 max-w-4xl mx-auto py-4">
     <div class="mb-4">
         <h1 class="h3 mb-0 text-gray-800">Edit Post</h1>
         <p class="text-muted small">Update your blog post details</p>
@@ -169,38 +169,6 @@
     .ql-container.ql-snow {
         border: none !important;
         border-radius: 0 0 0.5rem 0.5rem;
-    }
-
-    [data-bs-theme="dark"] .ql-toolbar.ql-snow {
-        background-color: #2b3035;
-        border-bottom-color: #373b3e !important;
-    }
-
-    [data-bs-theme="dark"] .ql-snow .ql-stroke {
-        stroke: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .ql-snow .ql-fill {
-        fill: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .ql-container.ql-snow {
-        background-color: #2b3035;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .ql-container.ql-snow *[style*="background-color"] {
-        background-color: #2b3035 !important;
-
-    }
-
-    [data-bs-theme="dark"] .ql-container.ql-snow *[style*="color"] {
-        color: #e9ecef !important;
-
-    }
-
-    [data-bs-theme="dark"] .ql-editor.ql-blank::before {
-        color: #6c757d;
     }
 </style>
 

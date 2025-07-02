@@ -1,7 +1,7 @@
 <?= $this->extend("admin/templates/layout") ?>
 <?= $this->section("admin_content") ?>
 
-<div class="container py-4 max-w-2xl mx-auto">
+<div class="container py-4 max-w-2xl mx-auto py-4">
     <div class="mb-4">
         <h1 class="h3 mb-0 text-gray-800">Edit Category</h1>
         <p class="text-muted small">Update category details</p>
@@ -56,20 +56,6 @@
     .btn-light {
         background-color: #f8f9fa;
         border: 1px solid #dee2e6;
-    }
-
-    [data-bs-theme="dark"] .form-control {
-        background-color: #2b3035;
-        border-color: #373b3e;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .text-muted {
-        color: #9ca3af !important;
-    }
-
-    [data-bs-theme="dark"] .text-gray-800 {
-        color: #e9ecef !important;
     }
 </style>
 <?= $this->endSection() ?>
