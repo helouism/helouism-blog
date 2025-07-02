@@ -10,7 +10,6 @@
         border-radius: 0.5rem;
     }
 
-
     .btn {
         padding: 0.75rem 1.5rem;
         border-radius: 0.5rem;
@@ -48,7 +47,4 @@
     </div>
     </form>
 </div>
-
-
-
 <?= $this->endSection() ?>

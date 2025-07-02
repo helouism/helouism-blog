@@ -36,7 +36,8 @@
                     'src' => base_url('uploads/thumbnails/' . $post['thumbnail_path']),
                     'alt' => esc($post['title']),
                     'class' => 'img-fluid rounded shadow-sm',
-                    'style' => 'width: 100%; height: auto; object-fit: cover;'
+                    'style' => 'width: 100%; height: auto; object-fit: cover;',
+                    'loading' => 'lazy',
                 ];
 
                 echo img($imageProperties); ?>
