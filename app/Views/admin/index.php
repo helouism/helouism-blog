@@ -1,5 +1,5 @@
 <?= $this->extend("admin/templates/layout") ?>
-<?= $this->section("admin_content") ?>
+<?= $this->section("adminContent") ?>
 <main>
     <div class="container-fluid px-4">
         <h1 class="mt-4">Dashboard</h1>

@@ -7,12 +7,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>Dashboard - SB Admin</title>
+    <title><?= esc($title) ?></title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <?php echo link_tag('assets/admin/css/styles.css'); ?>
-    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+
     <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+    <?= $this->renderSection('pageStyles') ?>
 
 </head>
 
@@ -21,7 +23,7 @@
     <div id="layoutSidenav">
         <?= $this->include("admin/partials/sidebar") ?>
         <div id="layoutSidenav_content">
-            <?= $this->renderSection("admin_content") ?>
+            <?= $this->renderSection("adminContent") ?>
 
             <?= $this->include("admin/partials/footer") ?>
         </div>

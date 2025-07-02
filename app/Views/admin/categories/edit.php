@@ -1,26 +1,4 @@
-<?= $this->extend("admin/templates/layout") ?>
-<?= $this->section("admin_content") ?>
-
-<div class="container py-4 max-w-2xl mx-auto py-4">
-    <div class="mb-4">
-        <h1 class="h3 mb-0 text-gray-800">Edit Category</h1>
-        <p class="text-muted small">Update category details</p>
-    </div>
-
-    <?= form_open('admin/categories/update/' . $category['id'], ['class' => 'needs-validation']) ?>
-    <div class="mb-4">
-        <label for="name" class="form-label text-sm fw-medium">Category Name</label>
-        <input type="text" class="form-control form-control-lg border-0 shadow-sm" name="name" id="name"
-            value="<?= esc($category['name']) ?>" placeholder="Enter category name" required>
-    </div>
-
-    <div class="d-flex gap-2">
-        <button type="submit" class="btn btn-primary px-4">Update Category</button>
-        <a href="<?= base_url('admin/categories') ?>" class="btn btn-light px-4">Cancel</a>
-    </div>
-    </form>
-</div>
-
+<?= $this->section("pageStyles") ?>
 <style>
     .max-w-2xl {
         max-width: 42rem;
@@ -58,4 +36,29 @@
         border: 1px solid #dee2e6;
     }
 </style>
+<?= $this->endSection() ?>
+<?= $this->extend("admin/templates/layout") ?>
+<?= $this->section("adminContent") ?>
+
+<div class="container py-4 max-w-2xl mx-auto py-4">
+    <div class="mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Edit Category</h1>
+        <p class="text-muted small">Update category details</p>
+    </div>
+
+    <?= form_open('admin/categories/update/' . $category['id'], ['class' => 'needs-validation']) ?>
+    <div class="mb-4">
+        <label for="name" class="form-label text-sm fw-medium">Category Name</label>
+        <input type="text" class="form-control form-control-lg border-0 shadow-sm" name="name" id="name"
+            value="<?= esc($category['name']) ?>" placeholder="Enter category name" required>
+    </div>
+
+    <div class="d-flex gap-2">
+        <button type="submit" class="btn btn-primary px-4">Update Category</button>
+        <a href="<?= base_url('admin/categories') ?>" class="btn btn-light px-4">Cancel</a>
+    </div>
+    </form>
+</div>
+
+
 <?= $this->endSection() ?>

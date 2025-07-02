@@ -4,17 +4,17 @@
             <div class="nav">
                 <div class="sb-sidenav-menu-heading">Core</div>
                 <a class="nav-link" href="<?php echo base_url("admin") ?>">
-                    <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
+                    <div class="sb-nav-link-icon"><i class="bi bi-speedometer"></i></div>
                     Admin Dashboard
                 </a>
 
                 <div class="sb-sidenav-menu-heading">Manage</div>
                 <a class="nav-link" href="<?php echo base_url("admin/posts") ?>">
-                    <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                    <div class="sb-nav-link-icon"><i class="bi bi-book"></i></div>
                     Manage Posts
                 </a>
                 <a class="nav-link" href="<?php echo base_url("admin/categories") ?>">
-                    <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                    <div class="sb-nav-link-icon"><i class="bi bi-table"></i></div>
                     Manage Categories
                 </a>
             </div>

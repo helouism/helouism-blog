@@ -1,5 +1,78 @@
+<?= $this->section("pageStyles") ?>
+<style>
+    .max-w-4xl {
+        max-width: 56rem;
+    }
+
+    .form-control {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    [data-bs-theme="dark"] .form-control {
+        background-color: #2b3035;
+        border-color: #373b3e;
+        color: #e9ecef;
+    }
+
+    [data-bs-theme="dark"] .form-text {
+        color: #9ca3af;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: #0b5ed7;
+    }
+
+    .btn-light {
+        border: 1px solid #dee2e6;
+    }
+
+    [data-bs-theme="dark"] .btn-light {
+        background-color: #2b3035;
+        border-color: #373b3e;
+        color: #e9ecef;
+    }
+
+    [data-bs-theme="dark"] .btn-light:hover {
+        background-color: #373b3e;
+    }
+
+    [data-bs-theme="dark"] .text-muted {
+        color: #9ca3af !important;
+    }
+
+    [data-bs-theme="dark"] .text-gray-800 {
+        color: #e9ecef !important;
+    }
+
+    .ql-toolbar.ql-snow {
+        border: none !important;
+        border-bottom: 1px solid #dee2e6 !important;
+        padding: 1rem !important;
+
+        border-radius: 0.5rem 0.5rem 0 0;
+    }
+
+    .ql-container.ql-snow {
+        border: none !important;
+        border-radius: 0 0 0.5rem 0.5rem;
+    }
+</style>
+<?= $this->endSection() ?>
 <?= $this->extend("admin/templates/layout") ?>
-<?= $this->section("admin_content") ?>
+<?= $this->section("adminContent") ?>
 
 
 <div class="container py-4 max-w-4xl mx-auto py-4">
@@ -100,77 +173,7 @@
     </form>
 </div>
 
-<style>
-    .max-w-4xl {
-        max-width: 56rem;
-    }
 
-    .form-control {
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        border-radius: 0.5rem;
-    }
-
-    [data-bs-theme="dark"] .form-control {
-        background-color: #2b3035;
-        border-color: #373b3e;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .form-text {
-        color: #9ca3af;
-    }
-
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
-        font-weight: 500;
-    }
-
-    .btn-primary {
-        background-color: #0d6efd;
-        border: none;
-    }
-
-    .btn-primary:hover {
-        background-color: #0b5ed7;
-    }
-
-    .btn-light {
-        border: 1px solid #dee2e6;
-    }
-
-    [data-bs-theme="dark"] .btn-light {
-        background-color: #2b3035;
-        border-color: #373b3e;
-        color: #e9ecef;
-    }
-
-    [data-bs-theme="dark"] .btn-light:hover {
-        background-color: #373b3e;
-    }
-
-    [data-bs-theme="dark"] .text-muted {
-        color: #9ca3af !important;
-    }
-
-    [data-bs-theme="dark"] .text-gray-800 {
-        color: #e9ecef !important;
-    }
-
-    .ql-toolbar.ql-snow {
-        border: none !important;
-        border-bottom: 1px solid #dee2e6 !important;
-        padding: 1rem !important;
-
-        border-radius: 0.5rem 0.5rem 0 0;
-    }
-
-    .ql-container.ql-snow {
-        border: none !important;
-        border-radius: 0 0 0.5rem 0.5rem;
-    }
-</style>
 
 <?= $this->endSection() ?>
 

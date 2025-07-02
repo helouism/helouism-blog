@@ -1,5 +1,5 @@
 <?= $this->extend("admin/templates/layout") ?>
-<?= $this->section("admin_content") ?>
+<?= $this->section("adminContent") ?>
 <div class="container-fluid px-4 py-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
