@@ -81,6 +81,60 @@
                 </div>
             </div>
         </div>
+        <div class="sidebar-widget about-widget mt-4">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="h5 mb-0">About</h3>
+                </div>
+                <div class="card-body">
+                    <p>Welcome to my blog! Here you'll find posts about various topics that interest me. Feel free to
+                        explore and enjoy your stay!</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Archive Widget -->
+        <div class="sidebar-widget archive-widget mt-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h3 class="h5 mb-0">Post Archive</h3>
+                </div>
+                <div class="card-body">
+                    <div class="accordion" id="archiveAccordion">
+                        <?php foreach ($archive as $year => $months): ?>
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="heading-archive-<?= $year ?>">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapse-archive-<?= $year ?>" aria-expanded="false"
+                                        aria-controls="collapse-archive-<?= $year ?>">
+                                        <?= $year ?>
+                                    </button>
+                                </h2>
+                                <div id="collapse-archive-<?= $year ?>" class="accordion-collapse collapse"
+                                    aria-labelledby="heading-archive-<?= $year ?>" data-bs-parent="#archiveAccordion">
+                                    <div class="accordion-body p-2">
+                                        <ul class="list-unstyled mb-0">
+                                            <?php foreach ($months as $monthNum => $count):
+                                                $monthName = date('F', mktime(0, 0, 0, $monthNum, 10)); ?>
+                                                <li>
+                                                    <a href="<?= base_url('archive/' . $year . '/' . $monthNum) ?>"
+                                                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                                                        <span><?= $monthName ?></span>
+                                                        <span class="badge bg-info rounded-pill ms-2"><?= $count ?></span>
+                                                    </a>
+                                                </li>
+                                            <?php endforeach; ?>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Archive Widget -->
+
     </div>
 </div>
 <?= $this->endSection() ?>
