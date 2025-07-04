@@ -43,7 +43,8 @@
                             <?= $postCount ?>         <?= $postCount === 1 ? 'Post' : 'Posts' ?>
                         </p>
                         <div class="mt-auto">
-                            <a href="<?= base_url('category/' . $category['slug']) ?>" class="btn stretched-link">
+                            <a href="<?= base_url('category/' . $category['slug']) ?>" class="btn stretched-link"
+                                target="_blank">
                                 View Posts
                             </a>
                         </div>

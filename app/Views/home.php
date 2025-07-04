@@ -16,16 +16,19 @@
                     <div class="row g-0">
                         <?php if ($post['thumbnail_path']): ?>
                             <div class="col-md-4">
-                                <img loading="lazy" decoding="async"
-                                    src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
-                                    class="img-fluid rounded-start h-100" alt="<?= esc($post['title']) ?>"
-                                    style="object-fit: cover;">
+                                <a href="<?= base_url('post/' . $post['slug']) ?>" target="_blank">
+                                    <img loading="lazy" decoding="async"
+                                        src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
+                                        class="img-fluid rounded-start h-100" alt="<?= esc($post['title']) ?>"
+                                        style="object-fit: cover;">
+                                </a>
                             </div>
                         <?php endif; ?>
                         <div class="<?= $post['thumbnail_path'] ? 'col-md-8' : 'col-12' ?>">
                             <div class="card-body">
                                 <h2 class="card-title h4">
-                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none text-dark">
+                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none text-dark"
+                                        target="_blank">
                                         <?= esc($post['title']) ?>
                                     </a>
                                 </h2>
@@ -41,7 +44,8 @@
                                             <?= date('M j, Y', strtotime($post['created_at'])) ?></span>
                                         <span class="ms-3"><i class="bi bi-person"></i> <?= esc($post['username']) ?></span>
                                     </div>
-                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-outline-primary">
+                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-outline-primary"
+                                        target="_blank">
                                         Read More
                                     </a>
                                 </div>
@@ -70,7 +74,8 @@
                         <?php foreach ($categories as $category): ?>
                             <li class="mb-2">
                                 <a href="<?= base_url('category/' . $category['slug']) ?>"
-                                    class="text-decoration-none d-flex justify-content-between align-items-center">
+                                    class="text-decoration-none d-flex justify-content-between align-items-center"
+                                    target="_blank">
                                     <span><i class="bi bi-folder me-2"></i><?= esc($category['name']) ?></span>
                                     <span class="badge bg-primary rounded-pill">
                                         <?= $categoryPostCounts[$category['name']] ?>
@@ -119,7 +124,8 @@
                                                 $monthName = date('F', mktime(0, 0, 0, $monthNum, 10)); ?>
                                                 <li>
                                                     <a href="<?= base_url('archive/' . $year . '/' . $monthNum) ?>"
-                                                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                                                        class="text-decoration-none d-flex justify-content-between align-items-center"
+                                                        target="_blank">
                                                         <span><?= $monthName ?></span>
                                                         <span class="badge bg-info rounded-pill ms-2"><?= $count ?></span>
                                                     </a>

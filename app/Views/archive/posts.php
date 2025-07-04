@@ -43,7 +43,8 @@
                         <div class="<?= $post['thumbnail_path'] ? 'col-md-8' : 'col-12' ?>">
                             <div class="card-body">
                                 <h2 class="card-title h4">
-                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none text-dark">
+                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none"
+                                        target="_blank">
                                         <?= esc($post['title']) ?>
                                     </a>
                                 </h2>
@@ -63,7 +64,8 @@
                                                 <?= esc($post['category_name']) ?></span>
                                         <?php endif; ?>
                                     </div>
-                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-outline-primary">
+                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-outline-primary"
+                                        target="_blank">
                                         Read More
                                     </a>
                                 </div>
@@ -133,7 +135,8 @@
                                                 $isActive = ($archiveYear == $year && $monthNum == $month); ?>
                                                 <li>
                                                     <a href="<?= base_url('archive/' . $archiveYear . '/' . $monthNum) ?>"
-                                                        class="text-decoration-none d-flex justify-content-between align-items-center <?= $isActive ? 'fw-bold text-primary' : '' ?>">
+                                                        class="text-decoration-none d-flex justify-content-between align-items-center <?= $isActive ? 'fw-bold text-primary' : '' ?>"
+                                                        target="_blank">
                                                         <span><?= $monthName ?></span>
                                                         <span class="badge bg-info rounded-pill ms-2"><?= $count ?></span>
                                                     </a>

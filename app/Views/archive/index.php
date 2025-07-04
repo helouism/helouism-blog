@@ -12,7 +12,7 @@
                 <li class="breadcrumb-item active" aria-current="page">Archive</li>
             </ol>
         </nav>
-        <p class="lead text-muted">Browse posts by year and month</p>
+
     </div>
 </div>
 
@@ -41,7 +41,8 @@
                                 <div class="col-md-6 col-lg-4 mb-3">
                                     <div class="d-grid">
                                         <a href="<?= base_url('archive/' . $year . '/' . $monthNum) ?>"
-                                            class="btn btn-outline-primary btn-lg d-flex justify-content-between align-items-center">
+                                            class="btn btn-outline-primary btn-lg d-flex justify-content-between align-items-center"
+                                            target="_blank">
                                             <span>
                                                 <i class="bi bi-folder me-2"></i>
                                                 <?= esc($monthName) ?>
