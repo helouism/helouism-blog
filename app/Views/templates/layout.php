@@ -54,9 +54,11 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
         rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        media="print" onload="this.media='all'"
         integrity="sha384-tViUnnbYAV00FLIhhi3v/dWt3Jxw4gZQcNoSCxCIFNJVCx7/D55/wXsrNIRANwdD" crossorigin="anonymous">
 
     <style>
@@ -75,21 +77,33 @@
         })();
     </script>
     <?php if ($title === 'helouism'): ?>
-        <?php echo link_tag('assets/css/home.min.css'); ?>
+        <link rel="stylesheet" href="<?= base_url('assets/css/home.min.css') ?>" media="print" onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="<?= base_url('assets/css/home.min.css') ?>">
+        </noscript>
     <?php endif ?>
     <?php if (isset($post['title'])): ?>
-        <!-- post.css -->
-        <?php echo link_tag('assets/css/post.min.css'); ?>
+        <link rel="stylesheet" href="<?= base_url('assets/css/post.min.css') ?>" media="print" onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="<?= base_url('assets/css/post.min.css') ?>">
+        </noscript>
     <?php endif ?>
 
 
     <?php if (isset($category['name'])): ?>
         <!-- category.css -->
-        <?php echo link_tag('assets/css/category.min.css'); ?>
+        <link rel="stylesheet" href="<?= base_url('assets/css/category.min.css') ?>" media="print"
+            onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="<?= base_url('assets/css/category.min.css') ?>">
+        </noscript>
     <?php endif ?>
     <?php if ($title === 'All Categories'): ?>
-        <!-- category-list.css -->
-        <?php echo link_tag('assets/css/category-list.min.css'); ?>
+        <link rel="stylesheet" href="<?= base_url('assets/css/category-list.min.css') ?>" media="print"
+            onload="this.media='all'">
+        <noscript>
+            <link rel="stylesheet" href="<?= base_url('assets/css/category-list.min.css') ?>">
+        </noscript>
     <?php endif ?>
 </head>
 
@@ -99,7 +113,7 @@
         <?= $this->renderSection("content") ?>
     </main>
     <?= $this->include("partials/footer") ?>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
     <?php echo script_tag('assets/js/theme-toggle.js'); ?>
