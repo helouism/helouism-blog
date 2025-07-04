@@ -18,6 +18,23 @@ class SearchController extends BaseController
 
     public function index()
     {
+        $validation = $this->validate([
+            'search_query' => [
+                'label' => 'Search Query',
+                'rules' => 'required|max_length[150]|alpha_numeric_space',
+                'errors' => [
+                    'required' => 'You must provide a {field}.',
+                    'max_length' => '{field} cannot exceed {param} characters.',
+                    'alpha_numeric_space' => '{field} can only contain alphanumeric characters and spaces.'
+                ]
+            ]
+        ]);
+        if (!$validation) {
+            // set flashdata for validation errors
+            session()->setFlashdata('errors', $this->validator->getErrors());
+            // redirect back to the search page
+            return redirect()->back()->withInput();
+        }
 
         $query = $this->request->getGet('search_query');
 
