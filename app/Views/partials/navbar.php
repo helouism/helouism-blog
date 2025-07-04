@@ -16,31 +16,40 @@
                     <a class="nav-link <?= $title === 'All Categories' ? 'active' : '' ?>"
                         href="<?php echo base_url("category-list") ?>">Categories</a>
                 </li>
-
             </ul>
+
+            <!-- Search Form -->
             <?php
-            $attributes = ['class' => 'd-flex', 'id' => 'myform', 'role' => 'search', 'method' => 'get'];
+            $attributes = ['class' => 'd-flex', 'id' => 'searchForm', 'role' => 'search', 'method' => 'get'];
             echo form_open('search', $attributes); ?>
-            <?php
-            $data = [
-                'type' => 'search',
-                'maxlength' => '100',
-                'name' => 'search_query',
-                'placeholder' => 'Search posts...',
-                'aria-label' => 'Search',
-                'class' => 'form-control me-2',
-                'required' => true,
-            ];
 
-            echo form_input($data); ?>
+            <div class="input-group">
+                <?php
+                $data = [
+                    'type' => 'search',
+                    'maxlength' => '150',
+                    'name' => 'search_query',
+                    'placeholder' => 'Search posts...',
+                    'aria-label' => 'Search',
+                    'class' => 'form-control',
+                    'value' => old('search_query') ?: ($query ?? ''), // Preserve search value
+                    'autocomplete' => 'off'
+                ];
+                echo form_input($data); ?>
 
+                <button class="btn btn-outline-success" type="submit" aria-label="Search">
+                    <i class="fas fa-search" aria-hidden="true"></i> Search
+                </button>
+            </div>
 
+            <?php echo form_close(); ?>
+
+            <!-- Error Toast -->
             <?php $errors = session()->getFlashdata('errors'); ?>
             <?php if (!empty($errors['search_query'])): ?>
-                <!-- Bootstrap Toast for error -->
                 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
                     <div id="searchErrorToast" class="toast align-items-center text-bg-danger border-0 show" role="alert"
-                        aria-live="assertive" aria-atomic="true">
+                        aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
                         <div class="d-flex">
                             <div class="toast-body">
                                 <?= esc($errors['search_query']) ?>
@@ -50,13 +59,20 @@
                         </div>
                     </div>
                 </div>
-
             <?php endif; ?>
-
-
-            <button class="btn btn-outline-success" type="submit">Search</button>
-            <?php echo form_close(); ?>
-
         </div>
     </div>
 </nav>
+
+<script>
+    // Optional: Auto-hide toast after 5 seconds
+    document.addEventListener('DOMContentLoaded', function () {
+        const toast = document.getElementById('searchErrorToast');
+        if (toast) {
+            setTimeout(() => {
+                const bsToast = new bootstrap.Toast(toast);
+                bsToast.hide();
+            }, 5000);
+        }
+    });
+</script>
