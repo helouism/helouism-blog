@@ -34,7 +34,8 @@
                     <div class="row g-0">
                         <?php if ($post['thumbnail_path']): ?>
                             <div class="col-md-4">
-                                <img loading="lazy" src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
+                                <img loading="lazy" decoding="async"
+                                    src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
                                     class="img-fluid rounded-start h-100" alt="<?= esc($post['title']) ?>"
                                     style="object-fit: cover;">
                             </div>

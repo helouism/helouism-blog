@@ -197,6 +197,7 @@
     });
 
     // FilePond initialization with server configuration
+    // FilePond initialization with image resize and compression
     const pond = FilePond.create(document.querySelector('input[name="thumbnail_path"]'), {
         allowImagePreview: true,
         imagePreviewMaxHeight: 100,
@@ -204,6 +205,12 @@
         acceptedFileTypes: ['image/*'],
         maxFiles: 1,
         maxFileSize: '5MB',
+
+
+        // Keep only basic transform for preview
+        imageTransformOutputMimeType: 'image/jpeg',
+        imageTransformOutputQuality: 0.9, // Higher quality for preview
+
         server: {
             url: '<?= base_url('admin/upload') ?>',
             process: '/process',
@@ -218,11 +225,9 @@
                 return;
             }
             console.log('File uploaded successfully:', file.serverId);
-            // Set the temp file ID in the hidden input
             document.getElementById('temp_file_id').value = file.serverId;
         },
         onremovefile: (error, file) => {
-            // Clear the temp file ID when file is removed
             document.getElementById('temp_file_id').value = '';
         },
         onprocessfilestart: (file) => {

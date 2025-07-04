@@ -54,24 +54,76 @@ class UploadController extends BaseController
 
             // Move file to temp location first
             $originalTempName = uniqid() . '_original_' . $file->getName();
+            $originalTempPath = FCPATH . 'uploads/temp/' . $originalTempName;
             $file->move(FCPATH . 'uploads/temp/', $originalTempName);
 
-            // Convert to WebP and save with final filename
-            service('image')
-                ->withFile(FCPATH . 'uploads/temp/' . $originalTempName)
-                ->convert(IMAGETYPE_WEBP)
-                ->save($tempPath, 85);
+            // Process image with memory optimization
+            $this->processImageWithCI($originalTempPath, $tempPath);
 
             // Delete original uploaded file
-            unlink(FCPATH . 'uploads/temp/' . $originalTempName);
+            if (file_exists($originalTempPath)) {
+                unlink($originalTempPath);
+            }
 
-            // Return the temporary file identifier (this becomes the serverId for FilePond)
+            // Return the temporary file identifier
             return $this->response->setBody($fileName);
 
         } catch (\Exception $e) {
+            // Clean up any temporary files on error
+            if (isset($originalTempPath) && file_exists($originalTempPath)) {
+                unlink($originalTempPath);
+            }
+            if (isset($tempPath) && file_exists($tempPath)) {
+                unlink($tempPath);
+            }
+
             return $this->response->setStatusCode(500)->setJSON([
                 'error' => 'Upload failed: ' . $e->getMessage()
             ]);
+        }
+    }
+
+
+    /**
+     * Process image using CodeIgniter's Image library
+     *
+     * @param string $sourcePath Path to the source image
+     * @param string $destinationPath Path to save the processed image
+     * @throws \Exception
+     */
+    private function processImageWithCI($sourcePath, $destinationPath)
+    {
+        $image = service('image');
+
+        // Get image info first
+        $imageInfo = getimagesize($sourcePath);
+        if (!$imageInfo) {
+            throw new \Exception('Invalid image file');
+        }
+
+        $sourceWidth = $imageInfo[0];
+        $sourceHeight = $imageInfo[1];
+
+        // Calculate new dimensions
+        $maxWidth = 1200;
+        $maxHeight = 630;
+
+        $scaleX = $maxWidth / $sourceWidth;
+        $scaleY = $maxHeight / $sourceHeight;
+        $scale = min($scaleX, $scaleY, 1);
+
+        $newWidth = (int) ($sourceWidth * $scale);
+        $newHeight = (int) ($sourceHeight * $scale);
+
+        // Process with CI Image library
+        $image->withFile($sourcePath)
+            ->resize($newWidth, $newHeight, true, 'center')
+            ->convert(IMAGETYPE_WEBP)
+            ->save($destinationPath, 85);
+
+        // Force garbage collection
+        if (function_exists('gc_collect_cycles')) {
+            gc_collect_cycles();
         }
     }
 
@@ -128,7 +180,7 @@ class UploadController extends BaseController
     }
 
     /**
-     * Clean up old temporary files (optional - can be called via cron job)
+     * Clean up old temporary files (can be called via cron job)
      */
     public function cleanupTempFiles()
     {

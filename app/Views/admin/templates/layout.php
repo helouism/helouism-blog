@@ -43,8 +43,17 @@
         integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+    <?php if ($title === 'Create Post' || $title === 'Edit Post'): ?>
 
+        <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
+        <!-- FilePond Image Resize Plugin -->
+        <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.min.js"></script>
+
+        <!-- FilePond Image Transform Plugin -->
+        <script
+            src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.min.js"></script>
+
+    <?php endif; ?>
     <?php if (session()->getFlashdata('success')): ?>
         <!-- Sweetalert success message -->
         <script>

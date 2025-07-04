@@ -27,7 +27,8 @@
                 <div class="card h-100 category-card hover-card">
                     <div class="category-image-wrapper">
                         <?php if ($latestPost && $latestPost['thumbnail_path']): ?>
-                            <img loading="lazy" src="<?= base_url('uploads/thumbnails/' . $latestPost['thumbnail_path']) ?>"
+                            <img loading="lazy" decoding="async"
+                                src="<?= base_url('uploads/thumbnails/' . $latestPost['thumbnail_path']) ?>"
                                 class="card-img-top category-image" alt="<?= esc($category['name']) ?>">
                         <?php else: ?>
                             <div class="category-image-placeholder">
