@@ -60,7 +60,7 @@ class UploadController extends BaseController
             service('image')
                 ->withFile(FCPATH . 'uploads/temp/' . $originalTempName)
                 ->convert(IMAGETYPE_WEBP)
-                ->save($tempPath);
+                ->save($tempPath, 85);
 
             // Delete original uploaded file
             unlink(FCPATH . 'uploads/temp/' . $originalTempName);
