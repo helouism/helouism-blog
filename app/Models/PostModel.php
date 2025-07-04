@@ -62,6 +62,33 @@ class PostModel extends Model
         }
         return $url;
     }
+    /**
+     * Get the post archive grouped by year and month.
+     *
+     * @return array
+     */
+    public function getPostArchive(): array
+    {
+        $builder = $this->select([
+            'YEAR(created_at) as year',
+            'MONTH(created_at) as month',
+            'COUNT(*) as post_count'
+        ])->groupBy('year, month')
+            ->orderBy('year', 'DESC')
+            ->orderBy('month', 'DESC')
+            ->findAll();
+
+        $archive = [];
+        foreach ($builder as $row) {
+            $year = $row['year'];
+            $month = $row['month'];
+            if (!isset($archive[$year])) {
+                $archive[$year] = [];
+            }
+            $archive[$year][$month] = $row['post_count'];
+        }
+        return $archive;
+    }
 
 
 }

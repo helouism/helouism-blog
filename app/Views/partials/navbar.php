@@ -18,6 +18,15 @@
                 </li>
 
             </ul>
+            <?php
+            $attributes = ['class' => 'd-flex', 'id' => 'myform', 'role' => 'search', 'method' => 'get'];
+            echo form_open('search', $attributes); ?>
+
+
+            <input class="form-control me-2" type="search" name="search_query" placeholder="Search"
+                aria-label="Search" />
+            <button class="btn btn-outline-success" type="submit">Search</button>
+            <?php echo form_close(); ?>
 
         </div>
     </div>

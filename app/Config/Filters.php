@@ -79,7 +79,7 @@ class Filters extends BaseFilters
                 ]
             ],
             'invalidchars',
-            'session' => ['except' => ['post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout', 'about']],
+            'session' => ['except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout', 'about']],
         ],
         'after' => [
             'honeypot',
