@@ -20,17 +20,27 @@ class CssOptimizer
         // Extract used selectors from HTML
         $this->extractUsedSelectors($htmlContent);
 
+
         // Remove unused rules
-        foreach ($cssDocument->getAllDeclarationBlocks() as $block) {
-            $keep = false;
-            foreach ($block->getSelectors() as $selector) {
-                if ($this->isSelectorUsed($selector->getSelector())) {
-                    $keep = true;
+        foreach ($cssDocument->getAllRuleSets() as $ruleSet) {
+            $selectors = $ruleSet->getSelectors();
+            $used = false;
+            foreach ($selectors as $selectorObj) {
+                $selector = (string) $selectorObj;
+                if ($this->isSelectorUsed($selector)) {
+                    $used = true;
                     break;
                 }
             }
-            if (!$keep) {
-                $block->remove();
+            if (!$used) {
+                $cssDocument->remove($ruleSet);
+            }
+        }
+
+        // Optionally, scale sizes (if you still want this feature)
+        foreach ($cssDocument->getAllValues() as $value) {
+            if ($value instanceof CSSSize && !$value->isRelative()) {
+                $value->setSize($value->getSize() / 2);
             }
         }
 
