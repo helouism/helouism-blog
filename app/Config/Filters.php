@@ -13,7 +13,7 @@ use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
 use App\Filters\CssOptimizationFilter;
-use App\Filters\IPThrottler;
+use App\Filters\Throttle;
 
 class Filters extends BaseFilters
 {
@@ -37,7 +37,7 @@ class Filters extends BaseFilters
         'pagecache' => PageCache::class,
         'performance' => PerformanceMetrics::class,
         'cssoptimization' => CssOptimizationFilter::class,
-        'throttle' => IPThrottler::class,
+        'throttle' => Throttle::class,
     ];
 
     /**
@@ -85,6 +85,7 @@ class Filters extends BaseFilters
             ],
             'invalidchars',
             'session' => ['except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout', 'about']],
+
         ],
         'after' => [
             'honeypot',
@@ -107,7 +108,11 @@ class Filters extends BaseFilters
      *
      * @var array<string, list<string>>
      */
-    public array $methods = [];
+    public array $methods = [
+        'POST' => ['throttle'],
+        'GET' => ['throttle'],
+
+    ];
 
     /**
      * List of filter aliases that should run on any
