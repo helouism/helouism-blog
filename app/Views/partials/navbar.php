@@ -20,7 +20,7 @@
 
             <!-- Search Form -->
             <?php
-            $attributes = ['class' => 'd-flex', 'id' => 'searchForm', 'role' => 'search', 'method' => 'get'];
+            $attributes = ['class' => 'd-flex', 'id' => 'searchForm', 'role' => 'search', 'method' => 'post'];
             echo form_open('search', $attributes); ?>
 
             <div class="input-group">
@@ -28,11 +28,11 @@
                 $data = [
                     'type' => 'search',
                     'maxlength' => '150',
-                    'name' => 'search_query',
+                    'name' => 'q',
                     'placeholder' => 'Search posts...',
                     'aria-label' => 'Search',
                     'class' => 'form-control',
-                    'value' => old('search_query') ?: ($query ?? ''), // Preserve search value
+                    'value' => old('q') ?: ($query ?? ''), // Preserve search value
                     'autocomplete' => 'off'
                 ];
                 echo form_input($data); ?>
@@ -46,13 +46,13 @@
 
             <!-- Error Toast -->
             <?php $errors = session()->getFlashdata('errors'); ?>
-            <?php if (!empty($errors['search_query'])): ?>
+            <?php if (!empty($errors['q'])): ?>
                 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
                     <div id="searchErrorToast" class="toast align-items-center text-bg-danger border-0 show" role="alert"
                         aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
                         <div class="d-flex">
                             <div class="toast-body">
-                                <?= esc($errors['search_query']) ?>
+                                <?= esc($errors['q']) ?>
                             </div>
                             <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
                                 aria-label="Close"></button>

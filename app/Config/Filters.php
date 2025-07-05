@@ -12,6 +12,8 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
+use App\Filters\CssOptimizationFilter;
+use App\Filters\IPThrottler;
 
 class Filters extends BaseFilters
 {
@@ -34,7 +36,8 @@ class Filters extends BaseFilters
         'forcehttps' => ForceHTTPS::class,
         'pagecache' => PageCache::class,
         'performance' => PerformanceMetrics::class,
-        'cssoptimization' => \App\Filters\CssOptimizationFilter::class,
+        'cssoptimization' => CssOptimizationFilter::class,
+        'throttle' => IPThrottler::class,
     ];
 
     /**
@@ -54,6 +57,7 @@ class Filters extends BaseFilters
         'before' => [
             'forcehttps', // Force Global Secure Requests
             'pagecache',  // Web Page Caching
+            'throttle'
 
         ],
         'after' => [

@@ -19,7 +19,7 @@ class SearchController extends BaseController
     {
         helper('search_helper');
         $validation = $this->validate([
-            'search_query' => [
+            'q' => [
                 'label' => 'Search Query',
                 'rules' => 'permit_empty|max_length[150]|min_length[1]',
                 'errors' => [
@@ -36,7 +36,7 @@ class SearchController extends BaseController
             return redirect()->back()->withInput();
         }
 
-        $query = $this->request->getGet('search_query');
+        $query = $this->request->getPost('q');
 
         // Sanitize the search query
         $sanitizedQuery = $this->sanitizeSearchQuery(strtolower($query));
