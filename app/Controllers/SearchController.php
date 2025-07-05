@@ -39,7 +39,7 @@ class SearchController extends BaseController
         $query = $this->request->getGet('search_query');
 
         // Sanitize the search query
-        $sanitizedQuery = $this->sanitizeSearchQuery($query);
+        $sanitizedQuery = $this->sanitizeSearchQuery(strtolower($query));
 
         $results = [];
         $totalResults = 0;
@@ -91,12 +91,6 @@ class SearchController extends BaseController
 
         // Trim whitespace
         $sanitized = trim($sanitized);
-
-        // Optional: Remove SQL wildcards if not using full-text search
-        // $sanitized = str_replace(['%', '_'], ['\\%', '\\_'], $sanitized);
-
         return $sanitized;
     }
-
-
 }
