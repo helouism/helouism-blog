@@ -18,6 +18,17 @@ class SearchController extends BaseController
     public function index()
     {
         helper('search_helper');
+
+        // Manual honeypot check
+        $honeypotField = config('Honeypot')->name ?? 'honeypot';
+        $honeypotValue = $this->request->getGet($honeypotField);
+
+        if (!empty($honeypotValue)) {
+            // Honeypot was filled - this is likely a bot
+            log_message('warning', 'Honeypot triggered on search form from IP: ' . $this->request->getIPAddress());
+            return redirect()->to('/');
+        }
+
         $validation = $this->validate([
             'q' => [
                 'label' => 'Search Query',
@@ -36,7 +47,7 @@ class SearchController extends BaseController
             return redirect()->back()->withInput();
         }
 
-        $query = $this->request->getPost('q');
+        $query = $this->request->getGet('q');
 
         // Sanitize the search query
         $sanitizedQuery = $this->sanitizeSearchQuery(strtolower($query));
@@ -60,8 +71,6 @@ class SearchController extends BaseController
                 ->like('title', $sanitizedQuery)
                 ->orLike('content', $sanitizedQuery)
                 ->paginate($perPage, 'default', $currentPage);
-
-
         }
 
         return view('search_results', [

@@ -12,7 +12,7 @@ use App\Controllers\Admin\DashboardController;
 $routes->get('/', 'Home::index');
 
 // Allow both GET and POST for search
-$routes->match(['get', 'post'], 'search', 'SearchController::index');
+$routes->get('search', 'SearchController::index');
 $routes->get('category-list', 'ListCategoryController::index');
 $routes->get('post/(:any)', 'PostItemController::show/$1');
 $routes->get('category/(:any)', 'CategoryItemController::show/$1');

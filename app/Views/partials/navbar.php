@@ -20,7 +20,7 @@
 
             <!-- Search Form -->
             <?php
-            $attributes = ['class' => 'd-flex', 'id' => 'searchForm', 'role' => 'search', 'method' => 'post'];
+            $attributes = ['class' => 'd-flex', 'id' => 'searchForm', 'role' => 'search', 'method' => 'get'];
             echo form_open('search', $attributes); ?>
 
             <div class="input-group">
