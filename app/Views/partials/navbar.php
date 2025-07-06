@@ -17,12 +17,8 @@
                         href="<?php echo base_url("category-list") ?>">Categories</a>
                 </li>
             </ul>
-
             <!-- Search Form -->
-
             <form method="get" action="<?= base_url('search') ?>" class="d-flex" id="searchForm" role="search">
-
-
                 <div class="input-group">
                     <?php
                     $data = [
