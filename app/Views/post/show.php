@@ -7,16 +7,19 @@
         <!-- Post Header -->
         <header class="post-header mb-5">
             <h1 class="display-4 fw-bold mb-4"><?= esc($post['title']) ?></h1>
+            <p class="text-muted">Posted on <?= date('F j, Y', strtotime($post['created_at'])) ?> by
+                <?= esc($post['username']) ?>
+            </p>
+
             <div class="post-meta text-muted mb-4">
                 <div class="d-flex align-items-center gap-3">
-                    <span><i class="bi bi-person"></i> <?= esc($post['username']) ?></span>
-                    <span><i class="bi bi-calendar3"></i>
-                        <?= date('F j, Y', strtotime($post['created_at'])) ?></span> <span><i class="bi bi-folder"></i>
+                    <span style="margin-left: 2px;" class="badge text-bg-primary">
                         <a href="<?= base_url('category/' . $post['category_slug']) ?>"
-                            class="text-decoration-none text-muted">
+                            class="text-decoration-none text-light">
                             <?= esc($post['category_name']) ?>
                         </a>
                     </span>
+                    <span style="margin-left: 2px;">•</span>
 
                     <?php
                     $wordsPerMinute = 200;
@@ -24,7 +27,7 @@
                     $minutes = ceil($wordCount / $wordsPerMinute);
                     $est = $minutes . ' min' . ($minutes == 1 ? '' : 's');
                     ?>
-                    <span><i class="bi bi-hourglass"></i><?php echo $est; ?></span>
+                    <span style="margin-left: 2px;"><?php echo $est; ?> read</span>
                 </div>
             </div>
         </header> <!-- Featured Image -->
@@ -57,14 +60,19 @@
         </article>
 
 
+
+
         <!-- Post Footer -->
         <footer class="post-footer mt-5 pt-4 border-top">
+
             <div class="d-flex justify-content-between align-items-center">
+
+
                 <div class="post-info">
                     <?php if ($post['updated_at'] !== $post['created_at']): ?>
                         <small class="text-muted">
 
-                            Last updated: <?= esc(date('F j, Y G:i', strtotime($post['updated_at']) + (7 * 3600))) ?>
+                            Last updated : <?= esc(date('F j, Y G:i', strtotime($post['updated_at']) + (7 * 3600))) ?>
                             Western
                             Indonesian Time
                         </small>
