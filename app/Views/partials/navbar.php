@@ -30,7 +30,7 @@
             </form>
 
             <!-- Error Toast -->
-            <?php $errors = session()->getFlashdata('errors'); ?>
+            <?php $errors = session()->getFlashdata('search_errors'); ?>
             <?php if (!empty($errors['q'])): ?>
                 <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 1100">
                     <div id="searchErrorToast" class="toast align-items-center text-bg-danger border-0 show" role="alert"

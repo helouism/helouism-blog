@@ -32,7 +32,7 @@ class SearchController extends BaseController
 
         if (!$validation) {
             // Set flashdata for validation errors
-            session()->setFlashdata('errors', $this->validator->getErrors());
+            session()->setFlashdata('search_errors', $this->validator->getErrors());
             // Redirect back to the previous page
             return redirect()->back()->withInput();
         }
