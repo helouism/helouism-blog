@@ -36,13 +36,21 @@ class PostModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert = [];
-    protected $afterInsert = [];
+    protected $afterInsert = ['clearSearchCache'];
     protected $beforeUpdate = [];
-    protected $afterUpdate = [];
+    protected $afterUpdate = ['clearSearchCache'];
     protected $beforeFind = [];
     protected $afterFind = [];
     protected $beforeDelete = [];
-    protected $afterDelete = [];
+    protected $afterDelete = ['clearSearchCache'];
+    public function getPostItem($slug)
+    {
+        $postItem = $this->select('posts.*, categories.slug as category_slug')
+            ->join('categories', 'categories.name = posts.category_name')
+            ->where('posts.slug', $slug)
+            ->first();
+        return $postItem;
+    }
 
 
     public function setSlug($title)
@@ -90,25 +98,48 @@ class PostModel extends Model
         return $archive;
     }
 
+    public function getPostByYearAndMonth($year, $month)
+    {
+        $posts = $this->where('YEAR(created_at)', $year)
+            ->where('MONTH(created_at)', $month)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(10, 'archive_posts');
+        return $posts;
+    }
 
-    public function getTotalSearchResults(string $sanitizedQuery)
+    public function getPostByCategory($category_name)
+    {
+        $posts = $this->where('category_name', $category_name)
+            ->orderBy('created_at', 'DESC')
+            ->paginate(6, 'category_posts');
+        return $posts;
+    }
+
+
+    public function getTotalSearchResults(string $sanitized_query)
     {
 
-        $totalSearchResults = $this->like('title', $sanitizedQuery)
-            ->orLike('content', $sanitizedQuery)
+
+        $totalSearchResults = $this->like('title', $sanitized_query)
+            ->orLike('content', $sanitized_query)
             ->countAllResults(false);
 
         return $totalSearchResults;
 
     }
 
-    public function getPaginatedSearchResults(string $sanitizedQuery, int $currentPage)
+    public function getSearchResults(string $sanitized_query)
     {
-        $paginatedSearchResults = $this->like('title', $sanitizedQuery)
-            ->orLike('content', $sanitizedQuery)
-            ->paginate(10, 'default', $currentPage);
-        return $paginatedSearchResults;
+        $searchResults = $this->like('title', $sanitized_query)
+            ->orLike('content', $sanitized_query)->findAll();
+
+        return $searchResults;
     }
 
+    protected function clearSearchCache(array $data)
+    {
+        $cache = \Config\Services::cache();
+        $cache->clean();
+    }
 
 }

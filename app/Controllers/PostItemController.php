@@ -21,17 +21,13 @@ class PostItemController extends BaseController
     {
 
 
-        $post = $this->postModel->select('posts.*, categories.slug as category_slug')
-            ->join('categories', 'categories.name = posts.category_name')
-            ->where('posts.slug', $slug)
-            ->first();
+        $post = $this->postModel->getPostItem($slug);
 
         if (!$post) {
             return redirect()->to('/')->with('error', 'Post not found');
         }
 
         $data = [
-
             'title' => $post['title'],
             'post' => $post,
 

@@ -27,10 +27,8 @@ class CategoryItemController extends BaseController
         }
 
         // Get paginated posts for this category
-        $posts = $this->postModel
-            ->where('category_name', $category['name'])
-            ->orderBy('created_at', 'DESC')
-            ->paginate(6, 'category_posts');
+        $posts = $this->postModel->getPostByCategory($category['name']);
+
 
         $data = [
             'title' => "Posts in {$category['name']}",

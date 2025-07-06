@@ -9,14 +9,17 @@ use App\Models\PostModel;
 class SearchController extends BaseController
 {
     protected $postModel;
+    protected $cache;
 
     public function __construct()
     {
         $this->postModel = new PostModel();
+        $this->cache = \Config\Services::cache();
     }
 
     public function index()
     {
+
         helper('search_helper');
         $validation = $this->validate([
             'q' => [
@@ -31,43 +34,61 @@ class SearchController extends BaseController
         ]);
 
         if (!$validation) {
-            // Set flashdata for validation errors
             session()->setFlashdata('search_errors', $this->validator->getErrors());
-            // Redirect back to the previous page
             return redirect()->back()->withInput();
         }
 
         $query = $this->request->getGet('q');
+        $sanitized_query = $this->sanitizeSearchQuery(strtolower($query));
 
-        // Sanitize the search query
-        $sanitizedQuery = $this->sanitizeSearchQuery(strtolower($query));
+        $search_results = [];
+        $total_results = 0;
 
-        $paginated_results = [];
-        $totalResults = 0;
+        if (!empty($sanitized_query)) {
 
-        if (!empty($sanitizedQuery)) {
-            // Get results with pagination
-            $perPage = 10;
-            $currentPage = (int) ($this->request->getGet('page') ?? 1);
+            // cache results
+            $cacheKey = $this->generateCacheKey($sanitized_query);
+            $cachedData = $this->cache->get($cacheKey);
 
-            // Get total count for pagination
-            $totalResults = $this->postModel
-                ->getTotalSearchResults($sanitizedQuery);
+            if ($cachedData !== null) {
+                // Use cached data
+                $total_results = $cachedData['total_results'];
+                $search_results = $cachedData['search_results'];
 
-            // Get paginated results
-            $paginated_results = $this->postModel
-                ->getPaginatedSearchResults($sanitizedQuery, $currentPage);
+            } else {
+                // Get fresh data from database
+                $total_results = $this->postModel->getTotalSearchResults($sanitized_query);
+                $search_results = $this->postModel->getSearchResults($sanitized_query);
+
+                // Cache the results for 15 minutes
+                $this->cache->save($cacheKey, [
+                    'total_results' => $total_results,
+                    'search_results' => $search_results,
+                ], 900); // 15 minutes
+            }
         }
 
-        return view('search_results', [
-            'query' => $sanitizedQuery,
+        $data = [
+            'query' => $sanitized_query,
             'original_query' => $query,
             'title' => 'Search Results',
-            'results' => $paginated_results,
-            'total_results' => $totalResults,
-            'pager' => $this->postModel->pager,
-        ]);
+            'search_results' => $search_results,
+            'total_results' => $total_results
+        ];
+        return view('search_results', $data);
     }
+
+
+    /**
+     * Generate a unique cache key for the search
+     */
+    private function generateCacheKey($query)
+    {
+        return 'search_' . md5($query);
+    }
+
+
+
 
     /**
      * Sanitize search query to prevent XSS and other attacks
@@ -78,13 +99,8 @@ class SearchController extends BaseController
             return '';
         }
 
-        // Remove potentially dangerous characters
         $sanitized = preg_replace('/[<>"\'\x00-\x1F\x7F]/', '', $query);
-
-        // Remove excessive whitespace
         $sanitized = preg_replace('/\s+/', ' ', $sanitized);
-
-        // Trim whitespace
         $sanitized = trim($sanitized);
         return $sanitized;
     }

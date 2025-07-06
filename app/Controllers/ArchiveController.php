@@ -29,11 +29,7 @@ class ArchiveController extends BaseController
         }
 
         // Get posts for the specific year and month
-        $posts = $this->postModel
-            ->where('YEAR(created_at)', $year)
-            ->where('MONTH(created_at)', $month)
-            ->orderBy('created_at', 'DESC')
-            ->paginate(10, 'archive_posts');
+        $posts = $this->postModel->getPostByYearAndMonth($year, $month);
 
         // Get month name for display
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
