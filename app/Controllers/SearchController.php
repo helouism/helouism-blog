@@ -42,7 +42,7 @@ class SearchController extends BaseController
         // Sanitize the search query
         $sanitizedQuery = $this->sanitizeSearchQuery(strtolower($query));
 
-        $results = [];
+        $paginated_results = [];
         $totalResults = 0;
 
         if (!empty($sanitizedQuery)) {
@@ -52,22 +52,18 @@ class SearchController extends BaseController
 
             // Get total count for pagination
             $totalResults = $this->postModel
-                ->like('title', $sanitizedQuery)
-                ->orLike('content', $sanitizedQuery)
-                ->countAllResults(false); // false keeps the query for reuse
+                ->getTotalSearchResults($sanitizedQuery);
 
             // Get paginated results
-            $results = $this->postModel
-                ->like('title', $sanitizedQuery)
-                ->orLike('content', $sanitizedQuery)
-                ->paginate($perPage, 'default', $currentPage);
+            $paginated_results = $this->postModel
+                ->getPaginatedSearchResults($sanitizedQuery, $currentPage);
         }
 
         return view('search_results', [
             'query' => $sanitizedQuery,
             'original_query' => $query,
             'title' => 'Search Results',
-            'results' => $results,
+            'results' => $paginated_results,
             'total_results' => $totalResults,
             'pager' => $this->postModel->pager,
         ]);

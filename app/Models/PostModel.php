@@ -91,4 +91,24 @@ class PostModel extends Model
     }
 
 
+    public function getTotalSearchResults(string $sanitizedQuery)
+    {
+
+        $totalSearchResults = $this->like('title', $sanitizedQuery)
+            ->orLike('content', $sanitizedQuery)
+            ->countAllResults(false);
+
+        return $totalSearchResults;
+
+    }
+
+    public function getPaginatedSearchResults(string $sanitizedQuery, int $currentPage)
+    {
+        $paginatedSearchResults = $this->like('title', $sanitizedQuery)
+            ->orLike('content', $sanitizedQuery)
+            ->paginate(10, 'default', $currentPage);
+        return $paginatedSearchResults;
+    }
+
+
 }
