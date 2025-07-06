@@ -57,7 +57,7 @@ class Filters extends BaseFilters
         'before' => [
             'forcehttps', // Force Global Secure Requests
             'pagecache',  // Web Page Caching
-            'throttle'
+
 
         ],
         'after' => [
@@ -76,7 +76,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'honeypot' => [
-                'except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', '/']
+                'except' => ['/', 'search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*']
             ],
             'csrf' => [
                 'except' => [
@@ -87,11 +87,11 @@ class Filters extends BaseFilters
             ],
             'invalidchars',
             'session' => ['except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout']],
-            'throttle'
+
         ],
         'after' => [
             'honeypot' => [
-                'except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', '/']
+                'except' => ['/', 'search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*']
             ],
             'secureheaders',
             'cssoptimization'
@@ -112,7 +112,9 @@ class Filters extends BaseFilters
      *
      * @var array<string, list<string>>
      */
-    public array $methods = [];
+    public array $methods = [
+        'POST' => ['throttle'],
+    ];
 
     /**
      * List of filter aliases that should run on any
