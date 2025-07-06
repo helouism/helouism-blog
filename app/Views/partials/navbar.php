@@ -19,30 +19,30 @@
             </ul>
 
             <!-- Search Form -->
-            <?php
-            $attributes = ['class' => 'd-flex', 'id' => 'searchForm', 'role' => 'search', 'method' => 'post'];
-            echo form_open('search', $attributes); ?>
 
-            <div class="input-group">
-                <?php
-                $data = [
-                    'type' => 'search',
-                    'maxlength' => '150',
-                    'name' => 'q',
-                    'placeholder' => 'Search posts...',
-                    'aria-label' => 'Search',
-                    'class' => 'form-control',
-                    'value' => old('q') ?: ($query ?? ''), // Preserve search value
-                    'autocomplete' => 'off'
-                ];
-                echo form_input($data); ?>
+            <form method="get" action="<?= base_url('search') ?>" class="d-flex" id="searchForm" role="search">
 
-                <button class="btn btn-outline-success" type="submit" aria-label="Search">
-                    <i class="fas fa-search" aria-hidden="true"></i> Search
-                </button>
-            </div>
 
-            <?php echo form_close(); ?>
+                <div class="input-group">
+                    <?php
+                    $data = [
+                        'type' => 'search',
+                        'maxlength' => '150',
+                        'name' => 'q',
+                        'placeholder' => 'Search posts...',
+                        'aria-label' => 'Search',
+                        'class' => 'form-control',
+                        'value' => old('q') ?: ($query ?? ''), // Preserve search value
+                        'autocomplete' => 'off'
+                    ];
+                    echo form_input($data); ?>
+
+                    <button class="btn btn-outline-success" type="submit" aria-label="Search">
+                        <i class="fas fa-search" aria-hidden="true"></i> Search
+                    </button>
+                </div>
+
+            </form>
 
             <!-- Error Toast -->
             <?php $errors = session()->getFlashdata('errors'); ?>
