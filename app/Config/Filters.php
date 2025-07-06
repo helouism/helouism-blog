@@ -75,7 +75,9 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            'honeypot',
+            'honeypot' => [
+                'except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', '/']
+            ],
             'csrf' => [
                 'except' => [
                     'admin/upload/process',
@@ -85,10 +87,12 @@ class Filters extends BaseFilters
             ],
             'invalidchars',
             'session' => ['except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout']],
-
+            'throttle'
         ],
         'after' => [
-            'honeypot',
+            'honeypot' => [
+                'except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', '/']
+            ],
             'secureheaders',
             'cssoptimization'
 
@@ -108,11 +112,7 @@ class Filters extends BaseFilters
      *
      * @var array<string, list<string>>
      */
-    public array $methods = [
-        'POST' => ['throttle'],
-        'GET' => ['throttle'],
-
-    ];
+    public array $methods = [];
 
     /**
      * List of filter aliases that should run on any

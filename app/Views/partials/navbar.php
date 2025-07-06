@@ -20,24 +20,13 @@
             <!-- Search Form -->
             <form method="get" action="<?= base_url('search') ?>" class="d-flex" id="searchForm" role="search">
                 <div class="input-group">
-                    <?php
-                    $data = [
-                        'type' => 'search',
-                        'maxlength' => '150',
-                        'name' => 'q',
-                        'placeholder' => 'Search posts...',
-                        'aria-label' => 'Search',
-                        'class' => 'form-control',
-                        'value' => old('q') ?: ($query ?? ''), // Preserve search value
-                        'autocomplete' => 'off'
-                    ];
-                    echo form_input($data); ?>
+                    <input type="search" maxlength="150" name="q" placeholder="Search posts..." aria-label="Search"
+                        class="form-control" value="<?= old('q') ?: ($query ?? '') ?>" autocomplete="off">
 
                     <button class="btn btn-outline-success" type="submit" aria-label="Search">
                         <i class="fas fa-search" aria-hidden="true"></i> Search
                     </button>
                 </div>
-
             </form>
 
             <!-- Error Toast -->
