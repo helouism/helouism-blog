@@ -78,7 +78,7 @@
                                     target="_blank">
                                     <span><i class="bi bi-folder me-2"></i><?= esc($category['name']) ?></span>
                                     <span class="badge bg-primary rounded-pill">
-                                        <?= $categoryPostCounts[$category['name']] ?>
+                                        <?= $categoryPostCounts[$category['id']] ?>
                                     </span>
                                 </a>
                             </li>

@@ -4,18 +4,19 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use App\Models\CategoryModel;
+use App\Models\PostModel;
 use CodeIgniter\HTTP\ResponseInterface;
 
 class CategoryController extends BaseController
 {
     protected $categoryModel;
+    protected $postModel;
 
     public function __construct()
     {
         $this->categoryModel = new CategoryModel();
+        $this->postModel = new PostModel();
     }
-
-
 
     public function index()
     {
@@ -28,8 +29,6 @@ class CategoryController extends BaseController
         ];
 
         return view('admin/categories/index', $data);
-
-
     }
 
     /**
@@ -43,7 +42,6 @@ class CategoryController extends BaseController
         ];
         return view('admin/categories/create', $data);
     }
-
 
     /**
      * store function
@@ -65,24 +63,18 @@ class CategoryController extends BaseController
         ]);
         if (!$validation) {
             session()->setFlashdata('error', $this->validator->listErrors());
-
             return redirect()->to(base_url('admin/categories/create'));
-
         } else {
             //insert data into database
             $this->categoryModel->insert([
                 'name' => $this->request->getPost('name'),
                 'slug' => $this->categoryModel->setSlug($this->request->getPost('name')),
-
             ]);
 
             //flash message
             session()->setFlashdata('success', 'New category added');
-
             return redirect()->to(base_url('admin/categories'));
         }
-
-
     }
 
     /**
@@ -99,46 +91,45 @@ class CategoryController extends BaseController
 
         return view('admin/categories/edit', $data);
     }
+
     public function update($id)
     {
         //load helper form and URL
         helper('form');
 
+        // Get the current category to exclude it from unique validation
+        $currentCategory = $this->categoryModel->find($id);
+
         //define validation
         $validation = $this->validate([
             'name' => [
-                'rules' => 'required|max_length[150]|string|is_unique[categories.name]|alpha_numeric_space',
+                'rules' => 'required|max_length[150]|alpha_numeric_space|is_unique[categories.name,id,' . $id . ']',
                 'errors' => [
                     'required' => 'Category name required.',
                     'is_unique' => 'Category name already exists',
                     'max_length' => 'Category name too long',
-                    'string' => 'Category name should be a text'
+                    'alpha_numeric_space' => 'Category name should be a text'
                 ]
             ],
         ]);
 
         if (!$validation) {
-
             //    Set error message
             session()->setFlashdata('error', $this->validator->listErrors());
-
             //render view with error validation message
             return redirect()->to(base_url('admin/categories/edit/') . $id);
-
         } else {
-            //insert data into database
+            //update data in database
             $name = $this->request->getPost('name');
             $this->categoryModel->update($id, [
                 'name' => $name,
-                'slug' => $this->categoryModel->setSlug($this->request->getPost('name')),
+                'slug' => $this->categoryModel->setSlug($name),
             ]);
 
             //flash message
             session()->setFlashdata('success', 'Category updated');
-
             return redirect()->to(base_url('admin/categories'));
         }
-
     }
 
     public function delete($id)
@@ -149,11 +140,25 @@ class CategoryController extends BaseController
         $category = $this->categoryModel->find($id);
 
         if ($category) {
+            // Check if there are posts in this category
+            $postsInCategory = $this->postModel->where('category_id', $id)->countAllResults();
+
+            if ($postsInCategory > 0) {
+                //  Prevent deletion if there are posts
+                // session()->setFlashdata('error', "Cannot delete category '{$category['name']}' because it contains {$postsInCategory} posts. Please move or delete the posts first.");
+                // return redirect()->to(base_url('admin/categories'));
+
+                //  Delete posts along with category )
+                $this->postModel->where('category_id', $id)->delete();
+            }
+
             $this->categoryModel->delete($id);
 
             //flash message
             session()->setFlashdata('success', 'Category Deleted');
-
+            return redirect()->to(base_url('admin/categories'));
+        } else {
+            session()->setFlashdata('error', 'Category not found');
             return redirect()->to(base_url('admin/categories'));
         }
     }

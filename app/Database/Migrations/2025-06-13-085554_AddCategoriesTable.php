@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 use CodeIgniter\Database\RawSql;
-class CreateCategoryTable extends Migration
+class AddCategoriesTable extends Migration
 {
     public function up()
     {

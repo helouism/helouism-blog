@@ -152,7 +152,7 @@
             foreach ($categories as $category) {
                 $options[$category['name']] = $category['name'];
             }
-            echo form_dropdown('category_name', $options, $post['category_name'], 'id="category_name" class="form-control border-0 shadow-sm"');
+            echo form_dropdown('category_name', $options, $category_name, 'id="category_name" class="form-control border-0 shadow-sm"');
             ?>
         </div>
     </div>

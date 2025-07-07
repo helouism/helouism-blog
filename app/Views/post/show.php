@@ -16,7 +16,7 @@
                     <span style="margin-left: 2px;" class="badge text-bg-primary">
                         <a href="<?= base_url('category/' . $post['category_slug']) ?>"
                             class="text-decoration-none text-light">
-                            <?= esc($post['category_name']) ?>
+                            <?= esc($category_name) ?>
                         </a>
                     </span>
                     <span style="margin-left: 2px;">•</span>

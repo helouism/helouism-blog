@@ -4,7 +4,7 @@ namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
 use CodeIgniter\Database\RawSql;
-class CreatePostTable extends Migration
+class AddPostsTable extends Migration
 {
     public function up()
     {
@@ -46,9 +46,9 @@ class CreatePostTable extends Migration
                 'type' => 'VARCHAR',
                 'constraint' => 30,
             ],
-            'category_name' => [
-                'type' => 'VARCHAR',
-                'constraint' => '150',
+            'category_id' => [
+                'type' => 'INT',
+                'constraint' => 11,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
@@ -62,7 +62,7 @@ class CreatePostTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('username', 'users', 'username');
-        $this->forge->addForeignKey('category_name', 'categories', 'name');
+        $this->forge->addForeignKey('category_id', 'categories', 'id', 'CASCADE');
         $this->forge->createTable('posts', true);
     }
 

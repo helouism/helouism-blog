@@ -31,6 +31,7 @@ class ArchiveController extends BaseController
         // Get posts for the specific year and month
         $posts = $this->postModel->getPostByYearAndMonth($year, $month);
 
+
         // Get month name for display
         $monthName = date('F', mktime(0, 0, 0, $month, 10));
 
@@ -43,6 +44,7 @@ class ArchiveController extends BaseController
             'monthName' => $monthName,
             'pager' => $this->postModel->pager,
             'categories' => $this->categoryModel->findAll(),
+
             'archive' => $this->postModel->getPostArchive()
         ];
 

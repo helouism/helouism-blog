@@ -12,7 +12,7 @@ class PostModel extends Model
     protected $returnType = 'array';
     protected $useSoftDeletes = false;
     protected $protectFields = true;
-    protected $allowedFields = ['title', 'slug', 'meta_description', 'thumbnail_caption', 'thumbnail_path', 'content', 'username', 'category_name'];
+    protected $allowedFields = ['title', 'slug', 'meta_description', 'thumbnail_caption', 'thumbnail_path', 'content', 'username', 'category_id'];
 
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
@@ -43,15 +43,15 @@ class PostModel extends Model
     protected $afterFind = [];
     protected $beforeDelete = [];
     protected $afterDelete = ['clearSearchCache'];
+
     public function getPostItem($slug)
     {
-        $postItem = $this->select('posts.*, categories.slug as category_slug')
-            ->join('categories', 'categories.name = posts.category_name')
+        $postItem = $this->select('posts.*, categories.slug as category_slug, categories.name as category_name')
+            ->join('categories', 'categories.id = posts.category_id', 'left') // Changed to LEFT JOIN
             ->where('posts.slug', $slug)
             ->first();
         return $postItem;
     }
-
 
     public function setSlug($title)
     {
@@ -70,6 +70,7 @@ class PostModel extends Model
         }
         return $url;
     }
+
     /**
      * Get the post archive grouped by year and month.
      *
@@ -100,38 +101,41 @@ class PostModel extends Model
 
     public function getPostByYearAndMonth($year, $month)
     {
-        $posts = $this->where('YEAR(created_at)', $year)
-            ->where('MONTH(created_at)', $month)
-            ->orderBy('created_at', 'DESC')
+        $posts = $this->select('posts.*, categories.name as category_name, categories.slug as category_slug')
+            ->join('categories', 'categories.id = posts.category_id', 'left') // LEFT JOIN to handle missing categories
+            ->where('YEAR(posts.created_at)', $year)
+            ->where('MONTH(posts.created_at)', $month)
+            ->orderBy('posts.created_at', 'DESC')
             ->paginate(10, 'archive_posts');
         return $posts;
     }
 
-    public function getPostByCategory($category_name)
+    public function getPostByCategory($category_id)
     {
-        $posts = $this->where('category_name', $category_name)
-            ->orderBy('created_at', 'DESC')
+        $posts = $this->select('posts.*, categories.name as category_name, categories.slug as category_slug')
+            ->join('categories', 'categories.id = posts.category_id', 'left')
+            ->where('posts.category_id', $category_id)
+            ->orderBy('posts.created_at', 'DESC')
             ->paginate(6, 'category_posts');
         return $posts;
     }
 
-
     public function getTotalSearchResults(string $sanitized_query)
     {
-
-
         $totalSearchResults = $this->like('title', $sanitized_query)
             ->orLike('content', $sanitized_query)
             ->countAllResults(false);
 
         return $totalSearchResults;
-
     }
 
     public function getSearchResults(string $sanitized_query)
     {
-        $searchResults = $this->like('title', $sanitized_query)
-            ->orLike('content', $sanitized_query)->findAll();
+        $searchResults = $this->select('posts.*, categories.name as category_name, categories.slug as category_slug')
+            ->join('categories', 'categories.id = posts.category_id', 'left')
+            ->like('posts.title', $sanitized_query)
+            ->orLike('posts.content', $sanitized_query)
+            ->findAll();
 
         return $searchResults;
     }
@@ -141,5 +145,4 @@ class PostModel extends Model
         $cache = \Config\Services::cache();
         $cache->clean();
     }
-
 }

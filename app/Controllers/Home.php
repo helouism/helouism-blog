@@ -21,7 +21,7 @@ class Home extends BaseController
         $categories = $this->categoryModel->findAll();
         $counts = [];
         foreach ($categories as $category) {
-            $counts[$category['name']] = $this->postModel->where('category_name', $category['name'])->countAllResults();
+            $counts[$category['id']] = $this->postModel->where('category_id', $category['id'])->countAllResults();
         }
         return $counts;
     }

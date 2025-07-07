@@ -121,7 +121,7 @@ class PostController extends BaseController
             'thumbnail_path' => $thumbnail,
             'username' => $username,
             'content' => $this->request->getPost('content'),
-            'category_name' => $this->request->getPost('category_name')
+            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name'))
         ]);
 
         session()->setFlashdata('success', 'New post added');
@@ -138,7 +138,8 @@ class PostController extends BaseController
         $data = array(
             'title' => 'Edit Post',
             'post' => $this->postModel->find($id),
-            'categories' => $this->categoryModel->findAll() // Get all categories
+            'categories' => $this->categoryModel->findAll(), // Get all categories
+            'category_name' => $this->categoryModel->getNameFromId($id)
         );
 
         return view('admin/posts/edit', $data);
@@ -206,14 +207,14 @@ class PostController extends BaseController
             'slug' => $this->postModel->setSlug($this->request->getPost('title')),
             'content' => $this->request->getPost('content'),
             'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
-            'category_name' => $this->request->getPost('category_name')
+            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name'))
         ];
 
         // Check if any changes were made
         $changes = false;
 
         // Compare title, content and category
-        foreach (['title', 'content', 'category_name', 'meta_description', 'thumbnail_caption'] as $field) {
+        foreach (['title', 'content', 'category_id', 'meta_description', 'thumbnail_caption'] as $field) {
             if ($oldData[$field] !== $newData[$field]) {
                 $changes = true;
             }

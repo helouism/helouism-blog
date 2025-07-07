@@ -17,7 +17,8 @@ class CategoryModel extends Model
     protected bool $allowEmptyInserts = false;
     protected bool $updateOnlyChanged = true;
 
-    protected array $casts = [];
+    protected array $casts = [
+    ];
     protected array $castHandlers = [];
 
     // Dates
@@ -60,6 +61,25 @@ class CategoryModel extends Model
             return $url . "-" . $jumlah;
         }
         return $url;
+    }
+
+    // Get Category id from name
+    public function getIdFromName($category_name)
+    {
+        $category_id = $this->select('id')
+            ->where('name', $category_name)
+            ->first();
+        return $category_id;
+
+
+    }
+
+    public function getNameFromId($category_id)
+    {
+        $category_name = $this->select('name')
+            ->where('id', $category_id)
+            ->first();
+        return $category_name;
     }
 
 

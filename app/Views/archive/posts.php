@@ -59,10 +59,7 @@
                                         <span><i class="bi bi-calendar3"></i>
                                             <?= date('M j, Y', strtotime($post['created_at'])) ?></span>
                                         <span class="ms-3"><i class="bi bi-person"></i> <?= esc($post['username']) ?></span>
-                                        <?php if ($post['category_name']): ?>
-                                            <span class="ms-3"><i class="bi bi-folder"></i>
-                                                <?= esc($post['category_name']) ?></span>
-                                        <?php endif; ?>
+
                                     </div>
                                     <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-outline-primary"
                                         target="_blank">
