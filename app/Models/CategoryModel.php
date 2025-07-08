@@ -64,22 +64,20 @@ class CategoryModel extends Model
     }
 
     // Get Category id from name
-    public function getIdFromName($category_name)
+    public function getIdFromName($category_name): string
     {
-        $category_id = $this->select('id')
-            ->where('name', $category_name)
+        $category = $this->where('name', $category_name)
             ->first();
-        return $category_id;
+        return $category['id'];
 
 
     }
 
-    public function getNameFromId($category_id)
+    public function getNameFromId($category_id): string
     {
-        $category_name = $this->select('name')
-            ->where('id', $category_id)
+        $category = $this->where('id', $category_id)
             ->first();
-        return $category_name;
+        return $category['name'];
     }
 
 

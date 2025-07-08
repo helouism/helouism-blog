@@ -63,7 +63,7 @@ class AddPostsTable extends Migration
 
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('username', 'users', 'username');
-        $this->forge->addForeignKey('category_id', 'categories', 'id', 'CASCADE');
+        $this->forge->addForeignKey('category_id', 'categories', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('posts', true);
     }
 

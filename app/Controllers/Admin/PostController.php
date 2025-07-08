@@ -90,6 +90,14 @@ class PostController extends BaseController
                     'is_not_unique' => 'Selected category does not exist'
                 ]
             ],
+            'status' => [
+                'rules' => 'required|alpha_dash|in_list[published,draft]',
+                'errors' => [
+                    'required' => 'Post status Required',
+                    'alpha_dash' => 'Post status is not a valid string',
+                    'in_list' => 'Post status is not in list'
+                ]
+            ],
         ]);
 
         if (!$validation) {
@@ -121,7 +129,8 @@ class PostController extends BaseController
             'thumbnail_path' => $thumbnail,
             'username' => $username,
             'content' => $this->request->getPost('content'),
-            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name'))
+            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name')),
+            'status' => $this->request->getPost('status')
         ]);
 
         session()->setFlashdata('success', 'New post added');
@@ -134,13 +143,16 @@ class PostController extends BaseController
     public function edit($id)
     {
         helper('form');
+        $post = $this->postModel->find($id);
+        $post_category_id = $this->categoryModel->getNameFromId($post['category_id']);
 
-        $data = array(
+        $data = [
             'title' => 'Edit Post',
-            'post' => $this->postModel->find($id),
-            'categories' => $this->categoryModel->findAll(), // Get all categories
-            'category_name' => $this->categoryModel->getNameFromId($id)
-        );
+            'post' => $post,
+            'categories' => $this->categoryModel->findAll(),
+            'category_name' => $post_category_id
+        ];
+
 
         return view('admin/posts/edit', $data);
     }
@@ -193,7 +205,15 @@ class PostController extends BaseController
                     'required' => 'Post thumbnail caption Required',
                     'alpha_numeric_space' => 'Post thumbnail caption should be a text'
                 ]
-            ]
+            ],
+            'status' => [
+                'rules' => 'required|alpha_dash|in_list[published,draft]',
+                'errors' => [
+                    'required' => 'Post status Required',
+                    'alpha_dash' => 'Post status is not a valid string',
+                    'in_list' => 'Post status is not in list'
+                ]
+            ],
         ]);
 
         if (!$validation) {
@@ -207,7 +227,8 @@ class PostController extends BaseController
             'slug' => $this->postModel->setSlug($this->request->getPost('title')),
             'content' => $this->request->getPost('content'),
             'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
-            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name'))
+            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name')),
+            'status' => $this->request->getPost('status'),
         ];
 
         // Check if any changes were made

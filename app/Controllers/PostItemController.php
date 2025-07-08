@@ -38,7 +38,7 @@ class PostItemController extends BaseController
         $data = [
             'title' => $post['title'],
             'post' => $post,
-            'category_name' => implode($category_name)
+            'category_name' => $category_name
 
         ];
 

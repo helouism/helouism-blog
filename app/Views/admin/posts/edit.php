@@ -144,7 +144,6 @@
             ];
             echo form_input($data); ?>
         </div>
-
         <div class="col-md-6">
             <label for="category_name" class="form-label text-sm fw-medium">Category</label>
             <?php
@@ -164,6 +163,16 @@
         <div id="editor" class="shadow-sm rounded" style="min-height: 300px;">
             <?= set_value($post['content'], $post['content'], false) ?>
         </div>
+    </div>
+
+    <div class="mb-4">
+        <label for="status" class="form-label text-sm fw-medium">Post Status</label>
+        <select name="status" class="form-select" aria-label="status">
+            <option value="published">Published</option>
+            <option selected value="draft">Draft</option>
+
+        </select>
+
     </div>
 
     <div class="d-flex gap-2">

@@ -153,6 +153,16 @@
         <div id="editor" class="shadow-sm rounded" style="min-height: 300px;"><?= set_value('content') ?></div>
     </div>
 
+    <div class="mb-4">
+        <label for="status" class="form-label text-sm fw-medium">Post Status</label>
+        <select name="status" class="form-select" aria-label="status">
+            <option value="published">Published</option>
+            <option selected value="draft">Draft</option>
+
+        </select>
+
+    </div>
+
     <div class="d-flex gap-2">
         <button type="submit" class="btn btn-primary px-4">Publish Post</button>
         <a href="<?= base_url('admin/posts') ?>" class="btn btn-light px-4">Cancel</a>
