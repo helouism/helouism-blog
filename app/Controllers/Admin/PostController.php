@@ -27,6 +27,7 @@ class PostController extends BaseController
         $data = [
             'title' => 'Manage Posts',
             'posts' => $this->postModel->where('username', $username)->paginate(10, 'post'),
+
             'pager' => $this->postModel->pager
         ];
 

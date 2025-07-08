@@ -22,7 +22,7 @@
                     <tr>
                         <th class="px-4">Title</th>
                         <th class="px-4">Status </th>
-                        <th class="px-4">Category </th>
+
                         <th class="text-end px-4" style="width: 200px">Actions</th>
                     </tr>
                 </thead>
@@ -32,7 +32,7 @@
                         <tr>
                             <td class="px-4"><?php echo $post['title'] ?></td>
                             <td class="px-4"><?php echo $post['status'] ?></td>
-                            <td class="px-4"><?php echo $post['category_id'] ?></td>
+
                             <td class="text-end px-4">
                                 <div class="btn-group">
                                     <a href="<?php echo base_url('admin/posts/edit/' . $post['id']) ?>"
