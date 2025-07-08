@@ -49,6 +49,7 @@ class AddPostsTable extends Migration
             'category_id' => [
                 'type' => 'INT',
                 'constraint' => 11,
+                'unsigned' => true,
             ],
             'created_at' => [
                 'type' => 'DATETIME',
