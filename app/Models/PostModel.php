@@ -44,9 +44,18 @@ class PostModel extends Model
     protected $beforeDelete = [];
     protected $afterDelete = ['clearSearchCache'];
 
+    public function getHomePosts()
+    {
+        $posts = $this->where('status', 'published')
+            ->orderBy('created_at', 'DESC')->paginate(5, 'home_posts');
+
+        return $posts;
+    }
+
     public function getPostItem($slug)
     {
-        $postItem = $this->select('posts.*, categories.slug as category_slug, categories.name as category_name')
+        $postItem = $this->where('status', 'published')
+            ->select('posts.*, categories.slug as category_slug, categories.name as category_name')
             ->join('categories', 'categories.id = posts.category_id', 'left') // Changed to LEFT JOIN
             ->where('posts.slug', $slug)
             ->first();
@@ -78,11 +87,12 @@ class PostModel extends Model
      */
     public function getPostArchive(): array
     {
-        $builder = $this->select([
-            'YEAR(created_at) as year',
-            'MONTH(created_at) as month',
-            'COUNT(*) as post_count'
-        ])->groupBy('year, month')
+        $builder = $this->where('status', 'published')
+            ->select([
+                'YEAR(created_at) as year',
+                'MONTH(created_at) as month',
+                'COUNT(*) as post_count'
+            ])->groupBy('year, month')
             ->orderBy('year', 'DESC')
             ->orderBy('month', 'DESC')
             ->findAll();
@@ -101,7 +111,8 @@ class PostModel extends Model
 
     public function getPostByYearAndMonth($year, $month)
     {
-        $posts = $this->select('posts.*, categories.name as category_name, categories.slug as category_slug')
+        $posts = $this->where('status', 'published')
+            ->select('posts.*, categories.name as category_name, categories.slug as category_slug')
             ->join('categories', 'categories.id = posts.category_id', 'left') // LEFT JOIN to handle missing categories
             ->where('YEAR(posts.created_at)', $year)
             ->where('MONTH(posts.created_at)', $month)
@@ -112,7 +123,8 @@ class PostModel extends Model
 
     public function getPostByCategory($category_id)
     {
-        $posts = $this->select('posts.*, categories.name as category_name, categories.slug as category_slug')
+        $posts = $this->where('status', 'published')
+            ->select('posts.*, categories.name as category_name, categories.slug as category_slug')
             ->join('categories', 'categories.id = posts.category_id', 'left')
             ->where('posts.category_id', $category_id)
             ->orderBy('posts.created_at', 'DESC')
@@ -122,7 +134,8 @@ class PostModel extends Model
 
     public function getTotalSearchResults(string $sanitized_query)
     {
-        $totalSearchResults = $this->like('title', $sanitized_query)
+        $totalSearchResults = $this->where('status', 'published')
+            ->like('title', $sanitized_query)
             ->orLike('content', $sanitized_query)
             ->countAllResults(false);
 
@@ -131,7 +144,8 @@ class PostModel extends Model
 
     public function getSearchResults(string $sanitized_query)
     {
-        $searchResults = $this->select('posts.*, categories.name as category_name, categories.slug as category_slug')
+        $searchResults = $this->where('status', 'published')
+            ->select('posts.*, categories.name as category_name, categories.slug as category_slug')
             ->join('categories', 'categories.id = posts.category_id', 'left')
             ->like('posts.title', $sanitized_query)
             ->orLike('posts.content', $sanitized_query)

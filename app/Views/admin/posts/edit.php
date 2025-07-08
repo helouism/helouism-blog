@@ -166,13 +166,15 @@
     </div>
 
     <div class="mb-4">
-        <label for="status" class="form-label text-sm fw-medium">Post Status</label>
-        <select name="status" class="form-select" aria-label="status">
-            <option value="published">Published</option>
-            <option selected value="draft">Draft</option>
 
-        </select>
-
+        <?php
+        $options = [
+            '' => 'Select Post Status',
+            'published' => 'Published',
+            'draft' => 'Draft'
+        ];
+        echo form_dropdown('status', $options, $post['status'], 'id="status" class="form-control border-0 shadow-sm"');
+        ?>
     </div>
 
     <div class="d-flex gap-2">

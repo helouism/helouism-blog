@@ -25,8 +25,10 @@ class ListCategoryController extends BaseController
 
         foreach ($categories as $category) {
             $categoryDetails[$category['name']] = [
-                'postCount' => $this->postModel->where('category_id', $category['id'])->countAllResults(),
-                'latestPost' => $this->postModel->where('category_id', $category['id'])
+                'postCount' => $this->postModel->where('status', 'published')
+                    ->where('category_id', $category['id'])->countAllResults(),
+                'latestPost' => $this->postModel->where('status', 'published')
+                    ->where('category_id', $category['id'])
                     ->orderBy('created_at', 'DESC')
                     ->first()
             ];
