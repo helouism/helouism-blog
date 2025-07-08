@@ -96,3 +96,8 @@ ServerSignature Off
     Header unset ETag
     FileETag None
 </IfModule>
+
+<IfModule mod_headers.c>
+  Header unset X-Powered-By
+  Header always unset X-Powered-By
+</IfModule>
