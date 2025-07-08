@@ -218,7 +218,8 @@ class PostController extends BaseController
         ]);
 
         if (!$validation) {
-            return redirect()->back()->withInput()->with('error', $this->validator->listErrors());
+            session()->setFlashdata('error', $this->validator->listErrors());
+            return redirect()->to(base_url('admin/posts/edit/' . $id));
         }
 
         // Get the new data
