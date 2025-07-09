@@ -56,11 +56,11 @@ class PostController extends BaseController
 
         $validation = $this->validate([
             'title' => [
-                'rules' => 'required|alpha_numeric_space|max_length[150]',
+                'rules' => 'required|alpha_numeric_punct|max_length[150]',
                 'errors' => [
                     'max_length' => 'Post Title too long',
                     'required' => 'Post Title Required',
-                    'alpha_numeric_space' => 'Post Title should be a text'
+                    'alpha_numeric_punct' => 'Post Title should be a text'
                 ]
             ],
             'meta_description' => [
@@ -171,11 +171,11 @@ class PostController extends BaseController
         // Validation rules
         $validation = $this->validate([
             'title' => [
-                'rules' => 'required|alpha_numeric_space|max_length[150]',
+                'rules' => 'required|alpha_numeric_punct|max_length[150]',
                 'errors' => [
                     'max_length' => 'Post Title too long',
                     'required' => 'Post Title Required',
-                    'alpha_numeric_space' => 'Post Title should be a text'
+                    'alpha_numeric_punct' => 'Post Title should be a text'
                 ]
             ],
             'content' => [
