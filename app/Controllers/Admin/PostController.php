@@ -237,7 +237,7 @@ class PostController extends BaseController
         $changes = false;
 
         // Compare title, content and category
-        foreach (['title', 'content', 'category_id', 'meta_description', 'thumbnail_caption'] as $field) {
+        foreach (['title', 'content', 'category_id', 'meta_description', 'thumbnail_caption', 'status'] as $field) {
             if ($oldData[$field] !== $newData[$field]) {
                 $changes = true;
             }
