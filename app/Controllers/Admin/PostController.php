@@ -145,8 +145,12 @@ class PostController extends BaseController
     {
         helper('form');
         $post = $this->postModel->find($id);
-        $post_category_id = $this->categoryModel->getNameFromId($post['category_id']);
 
+        if (!$post) {
+            return redirect()->to('admin/posts')->with('error', 'Post not found');
+        }
+
+        $post_category_id = $this->categoryModel->getNameFromId($post['category_id']);
         $data = [
             'title' => 'Edit Post',
             'post' => $post,

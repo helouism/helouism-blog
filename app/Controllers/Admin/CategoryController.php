@@ -84,9 +84,15 @@ class CategoryController extends BaseController
     {
         helper('form');
 
+        $category = $this->categoryModel->find($id);
+
+        if (!$category) {
+            return redirect()->to('admin/categories')->with('error', 'Category not found');
+        }
+
         $data = array(
             'title' => 'Edit Category',
-            'category' => $this->categoryModel->find($id)
+            'category' => $category
         );
 
         return view('admin/categories/edit', $data);
