@@ -100,7 +100,7 @@
         <?php $data = [
             'name' => 'meta_description',
             'id' => 'meta_description',
-            'value' => esc($post['title']),
+            'value' => esc($post['meta_description']),
             'maxlength' => '150',
             'class' => 'form-control form-control-lg border-0 shadow-sm',
             'placeholder' => 'Enter the meta description'
