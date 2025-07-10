@@ -19,7 +19,7 @@
         content="<?= isset($post['meta_description']) ? esc($post['meta_description']) : 'Blog website, technology, crypto' ?>">
     <meta name="twitter:site" content="helouism">
     <meta name="twitter:card" content="summary_large_image">
-    <?= csrf_meta() ?>
+
     <link rel="canonical" href="<?= current_url() ?>">
 
     <script type="application/ld+json">
