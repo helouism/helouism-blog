@@ -57,11 +57,11 @@
                 <!-- Grid column -->
                 <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
                     <div class="d-flex align-items-center justify-content-center">
-                        <i class="bi bi-sun"></i>
+                        <i class="bi bi-sun px-2"></i>
                         <div class="form-check form-switch mb-0">
                             <input class="form-check-input" type="checkbox" id="darkModeSwitch">
                         </div>
-                        <i class="bi bi-moon"></i>
+                        <i class="bi bi-moon px-2"></i>
                     </div>
                 </div>
                 <!-- Grid column -->
