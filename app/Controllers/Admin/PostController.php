@@ -64,17 +64,17 @@ class PostController extends BaseController
                 ]
             ],
             'meta_description' => [
-                'rules' => 'required|alpha_numeric_space|max_length[150]',
+                'rules' => 'required|alpha_numeric_punct|max_length[150]',
                 'errors' => [
                     'required' => 'Meta Description Required',
-                    'alpha_numeric_space' => 'Meta Description should be a text'
+                    'alpha_numeric_punct' => 'Meta Description should be a text'
                 ]
             ],
             'thumbnail_caption' => [
-                'rules' => 'required|alpha_numeric_space',
+                'rules' => 'required|alpha_numeric_punct',
                 'errors' => [
                     'required' => 'Post thumbnail caption Required',
-                    'alpha_numeric_space' => 'Post thumbnail caption should be a text'
+                    'alpha_numeric_punct' => 'Post thumbnail caption should be a text'
                 ]
             ],
             'content' => [
@@ -197,18 +197,18 @@ class PostController extends BaseController
                 ]
             ],
             'meta_description' => [
-                'rules' => 'required|alpha_numeric_space|max_length[150]',
+                'rules' => 'required|alpha_numeric_punct|max_length[150]',
                 'errors' => [
                     'required' => 'Meta Description Required',
-                    'alpha_numeric_space' => 'Meta Description should be a text'
+                    'alpha_numeric_punct' => 'Meta Description should be a text'
                 ]
             ],
             'thumbnail_caption' => [
-                'rules' => 'max_length[200]',
+                'rules' => 'max_length[200]|alpha_numeric_punct',
                 'errors' => [
                     'max_length' => 'Post thumbnail caption should be less than 200 characters',
                     'required' => 'Post thumbnail caption Required',
-                    'alpha_numeric_space' => 'Post thumbnail caption should be a text'
+                    'alpha_numeric_punct' => 'Post thumbnail caption should be a text'
                 ]
             ],
             'status' => [
