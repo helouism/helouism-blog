@@ -103,7 +103,7 @@ class PostController extends BaseController
 
         if (!$validation) {
             session()->setFlashdata('error', $this->validator->listErrors());
-            return redirect()->to(base_url('admin/posts/create'));
+            return redirect()->to(base_url('admin/posts/create'))->withInput();
         }
 
         $username = auth()->user()->username;
@@ -118,7 +118,7 @@ class PostController extends BaseController
 
         if (!$thumbnail) {
             session()->setFlashdata('error', 'Please select a thumbnail image');
-            return redirect()->to(base_url('admin/posts/create'));
+            return redirect()->to(base_url('admin/posts/create'))->withInput();
         }
 
         // Insert data into database
@@ -223,7 +223,7 @@ class PostController extends BaseController
 
         if (!$validation) {
             session()->setFlashdata('error', $this->validator->listErrors());
-            return redirect()->to(base_url('admin/posts/edit/' . $id));
+            return redirect()->to(base_url('admin/posts/edit/' . $id))->withInput();
         }
 
         // Get the new data
