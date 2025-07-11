@@ -15,11 +15,6 @@ class Home extends BaseController
         $this->postModel = new PostModel();
         $this->categoryModel = new CategoryModel();
     }
-
-
-
-
-
     public function index(): string
     {
         $data = [
