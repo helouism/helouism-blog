@@ -49,7 +49,7 @@
                         Useful links
                     </h6>
                     <p>
-                        <a href="https://helouism.github.io" class="text-reset">About</a>
+                        <a href="https://helouism.github.io" class="text-reset">About Me</a>
                     </p>
                 </div>
                 <!-- Grid column -->
