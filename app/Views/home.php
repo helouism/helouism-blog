@@ -20,7 +20,7 @@
                                     <img loading="lazy" decoding="async"
                                         src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
                                         class="img-fluid rounded-start h-100" alt="<?= esc($post['title']) ?>"
-                                        style="object-fit: cover;">
+                                        style="object-fit: contain;">
                                 </a>
                             </div>
                         <?php endif; ?>
