@@ -80,6 +80,23 @@ class CategoryModel extends Model
         return $category['name'];
     }
 
+    public function getCategoryPostCounts(): array
+    {
+        $builder = $this->db->table($this->table . ' c');
+        $builder->select('c.id, COUNT(p.id) as post_count');
+        $builder->join('posts p', 'p.category_id = c.id AND p.status = "published"', 'left');
+        $builder->groupBy('c.id');
+
+        $results = $builder->get()->getResultArray();
+
+        $counts = [];
+        foreach ($results as $result) {
+            $counts[$result['id']] = (int) $result['post_count'];
+        }
+
+        return $counts;
+    }
+
 
 
 }

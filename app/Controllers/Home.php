@@ -16,17 +16,7 @@ class Home extends BaseController
         $this->categoryModel = new CategoryModel();
     }
 
-    private function getCategoryPostCounts(): array
-    {
-        $categories = $this->categoryModel->findAll();
-        $counts = [];
-        foreach ($categories as $category) {
-            $counts[$category['id']] = $this->postModel->where('status', 'published')
-                ->where('category_id', $category['id'])
-                ->countAllResults();
-        }
-        return $counts;
-    }
+
 
 
 
@@ -36,7 +26,7 @@ class Home extends BaseController
             'title' => 'helouism',
             'posts' => $this->postModel->getHomePosts(),
             'categories' => $this->categoryModel->findAll(),
-            'categoryPostCounts' => $this->getCategoryPostCounts(),
+            'categoryPostCounts' => $this->categoryModel->getCategoryPostCounts(),
             'archive' => $this->postModel->getPostArchive(),
             'pager' => $this->postModel->pager
         ];
