@@ -33,3 +33,17 @@ function truncateText($text, $limit = 200)
 
     return substr($text, 0, $limit) . '...';
 }
+/**
+ * Helper function to sanitize search query
+ */
+function sanitizeSearchQuery($query)
+{
+    if (empty($query)) {
+        return '';
+    }
+
+    $sanitized = preg_replace('/[<>"\'\x00-\x1F\x7F]/', '', $query);
+    $sanitized = preg_replace('/\s+/', ' ', $sanitized);
+    $sanitized = trim($sanitized);
+    return $sanitized;
+}

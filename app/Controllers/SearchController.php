@@ -39,7 +39,7 @@ class SearchController extends BaseController
         }
 
         $query = $this->request->getGet('q');
-        $sanitized_query = $this->sanitizeSearchQuery(strtolower($query));
+        $sanitized_query = sanitizeSearchQuery(strtolower($query));
 
         $search_results = [];
         $total_results = 0;
@@ -85,23 +85,5 @@ class SearchController extends BaseController
     private function generateCacheKey($query)
     {
         return 'search_' . md5($query);
-    }
-
-
-
-
-    /**
-     * Sanitize search query to prevent XSS and other attacks
-     */
-    private function sanitizeSearchQuery($query)
-    {
-        if (empty($query)) {
-            return '';
-        }
-
-        $sanitized = preg_replace('/[<>"\'\x00-\x1F\x7F]/', '', $query);
-        $sanitized = preg_replace('/\s+/', ' ', $sanitized);
-        $sanitized = trim($sanitized);
-        return $sanitized;
     }
 }
