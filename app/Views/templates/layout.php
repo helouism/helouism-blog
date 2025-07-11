@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="author" content="Hendrik Louis Mahdi">
+
     <meta name="description"
         content="<?= isset($post['meta_description']) ? esc($post['meta_description']) : 'Blog website, technology, crypto' ?>">
     <meta property="og:type" content="website">
@@ -17,6 +18,15 @@
         content="<?= isset($post['meta_description']) ? esc($post['meta_description']) : 'Blog website, technology, crypto' ?>">
     <meta property="twitter:description"
         content="<?= isset($post['meta_description']) ? esc($post['meta_description']) : 'Blog website, technology, crypto' ?>">
+    <?php if (isset($post['created_at'])): ?>
+        <meta property="article:author" content="Hendrik Louis Mahdi">
+
+        <meta property="article:published_time" content="<?= date('Y-m-d\TH:i:s', strtotime($post['created_at'])) ?>" />
+        <meta property="article:modified_time" content="<?= date('Y-m-d\TH:i:s', strtotime($post['updated_at'])) ?>" />
+    <?php endif ?>
+    <?php if (isset($post['updated_at'])): ?>
+        <meta property="article:modified_time" content="<?= date('Y-m-d\TH:i:s', strtotime($post['updated_at'])) ?>" />
+    <?php endif ?>
     <meta name="twitter:site" content="helouism">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -131,6 +141,7 @@
     <main class="container-fluid py-5">
         <?= $this->renderSection("content") ?>
     </main>
+
     <?= $this->include("partials/footer") ?>
     <script src="<?= base_url('assets/js/bootstrap/bootstrap.bundle.min.js') ?>"></script>
     <?php echo script_tag('assets/js/theme-toggle.js'); ?>

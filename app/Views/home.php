@@ -74,8 +74,7 @@
                         <?php foreach ($categories as $category): ?>
                             <li class="mb-2">
                                 <a href="<?= base_url('category/' . $category['slug']) ?>"
-                                    class="text-decoration-none d-flex justify-content-between align-items-center"
-                                    target="_blank">
+                                    class="text-decoration-none d-flex justify-content-between align-items-center">
                                     <span><i class="bi bi-folder me-2"></i><?= esc($category['name']) ?></span>
                                     <span class="badge bg-primary rounded-pill">
                                         <?= $categoryPostCounts[$category['id']] ?>
@@ -124,8 +123,7 @@
                                                 $monthName = date('F', mktime(0, 0, 0, $monthNum, 10)); ?>
                                                 <li>
                                                     <a href="<?= base_url('archive/' . $year . '/' . $monthNum) ?>"
-                                                        class="text-decoration-none d-flex justify-content-between align-items-center"
-                                                        target="_blank">
+                                                        class="text-decoration-none d-flex justify-content-between align-items-center">
                                                         <span><?= $monthName ?></span>
                                                         <span class="badge bg-info rounded-pill ms-2"><?= $count ?></span>
                                                     </a>
