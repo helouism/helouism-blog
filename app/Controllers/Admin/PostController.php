@@ -56,26 +56,26 @@ class PostController extends BaseController
 
         $validation = $this->validate([
             'title' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
+                'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:!?"\']+$/u]|max_length[150]',
                 'errors' => [
                     'max_length' => 'Post Title too long',
                     'required' => 'Post Title Required',
-                    'alpha_numeric_punct' => 'Post Title should be a text'
+                    'regex_match' => 'Post Title should be valid text with allowed punctuation.',
                 ]
             ],
             'meta_description' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[255]',
+                'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
                 'errors' => [
                     'required' => 'Meta Description required',
                     'max_length' => 'Meta Description should be less than 255 characters',
-                    'alpha_numeric_punct' => 'Meta Description should be a text'
+                    'regex_match' => 'Meta Description should be valid text with allowed punctuation'
                 ]
             ],
             'thumbnail_caption' => [
-                'rules' => 'required|alpha_numeric_punct',
+                'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
                 'errors' => [
                     'required' => 'Post thumbnail caption Required',
-                    'alpha_numeric_punct' => 'Post thumbnail caption should be a text'
+                    'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation'
                 ]
             ],
             'content' => [
@@ -176,11 +176,11 @@ class PostController extends BaseController
         // Validation rules
         $validation = $this->validate([
             'title' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
+                'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:!?"\']+$/u]|max_length[150]',
                 'errors' => [
                     'max_length' => 'Post Title should be less than 150 characters',
                     'required' => 'Post Title Required',
-                    'alpha_numeric_punct' => 'Post Title should be a text'
+                    'regex_match' => 'Post Title should be valid text with allowed punctuation.',
                 ]
             ],
             'content' => [
@@ -198,19 +198,19 @@ class PostController extends BaseController
                 ]
             ],
             'meta_description' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[255]',
+                'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
                 'errors' => [
                     'required' => 'Meta Description Required',
-                    'alpha_numeric_punct' => 'Meta Description should be a text',
+                    'regex_match' => 'Meta Description should be valid text with allowed punctuation',
                     'max_length' => 'Meta Description should be less than 255 characters'
                 ]
             ],
             'thumbnail_caption' => [
-                'rules' => 'max_length[200]|alpha_numeric_punct',
+                'rules' => 'max_length[200]|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]',
                 'errors' => [
                     'max_length' => 'Post thumbnail caption should be less than 200 characters',
                     'required' => 'Post thumbnail caption Required',
-                    'alpha_numeric_punct' => 'Post thumbnail caption should be a text'
+                    'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation',
                 ]
             ],
             'status' => [

@@ -121,6 +121,7 @@
             $data = [
                 'name' => 'thumbnail_path',
                 'id' => 'thumbnail_path',
+
                 'class' => 'form-control border-0 shadow-sm filepond', // add filepond class
             ];
             echo form_upload($data); ?>
