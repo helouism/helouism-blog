@@ -55,7 +55,9 @@
         <!-- Post Content -->
         <article class="post-content">
             <div class="content-body">
+                <div class="ql-editor">
                 <?= $post['content'] ?>
+                </div>
             </div>
         </article>
 

@@ -25,29 +25,6 @@
   font-style: italic;
   color: #6c757d;
 }
-/* quill style */
-.ql-font-monospace {
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
-  font-size: 0.9em;
-
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-
-.ql-code-block {
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
-  font-size: 0.9em;
-
-  padding: 10px;
-
-  border-radius: 5px;
-  border-left: 4px solid #ccc;
-  white-space: pre-wrap;
-  overflow-x: auto;
-}
-.ql-font-serif {
-  font-family: Georgia, Times, "Times New Roman", serif;
-}
 
 /* Responsive typography */
 @media (max-width: 768px) {
