@@ -21,6 +21,11 @@
             }
         });
     </script>
+
+    <?php if (isset($post['title'])): ?>
+        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+    <?php endif ?>
+    <?= $this->renderSection("pageScripts") ?>
 </body>
 
 </html>

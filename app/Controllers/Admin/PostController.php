@@ -230,7 +230,7 @@ class PostController extends BaseController
         $newData = [
             'title' => $this->request->getPost('title'),
             'meta_description' => $this->request->getPost('meta_description'),
-            'slug' => $this->postModel->setSlug($this->request->getPost('title')),
+
             'content' => $this->request->getPost('content'),
             'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
             'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name')),

@@ -54,15 +54,12 @@
 
         <!-- Post Content -->
         <article class="post-content">
-            <div class="content-body">
-                <div class="ql-editor">
+
+            <div class="ql-editor">
                 <?= $post['content'] ?>
-                </div>
             </div>
+
         </article>
-
-
-
 
         <!-- Post Footer -->
         <footer class="post-footer mt-5 pt-4 border-top">
@@ -104,7 +101,7 @@
     </div>
 </div>
 <?= $this->endSection() ?>
-<?= $this->section('scripts') ?>
+<?= $this->section('pageScripts') ?>
 <script>
     function copyLink() {
         navigator.clipboard.writeText(window.location.href)
@@ -122,5 +119,42 @@
                 }, 2000);
             });
     }
+
+    function enhanceCodeBlocks() {
+        const blocks = document.querySelectorAll('.ql-code-block');
+        blocks.forEach(block => {
+            // Skip if already enhanced
+            if (block.parentElement.classList.contains('code-block-wrapper')) return;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = 'code-block-wrapper';
+
+            const header = document.createElement('div');
+            header.className = 'code-block-header';
+
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.innerText = 'Copy';
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(block.innerText).then(() => {
+                    copyBtn.innerText = 'Copied!';
+                    setTimeout(() => copyBtn.innerText = 'Copy', 2000);
+                });
+            };
+
+            header.appendChild(copyBtn);
+            wrapper.appendChild(header);
+            wrapper.appendChild(block.cloneNode(true));
+            block.replaceWith(wrapper);
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", (event) => {
+        enhanceCodeBlocks();
+    });
+
+
+
+
 </script>
 <?= $this->endSection() ?>
