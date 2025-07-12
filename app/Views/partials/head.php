@@ -93,6 +93,7 @@
         </noscript>
     <?php endif ?>
     <?php if (isset($post['title'])): ?>
+        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
         <link rel="stylesheet" href="<?= base_url('assets/css/post.min.css') ?>" media="print" onload="this.media='all'">
         <noscript>
             <link rel="stylesheet" href="<?= base_url('assets/css/post.min.css') ?>">
