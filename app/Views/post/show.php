@@ -122,9 +122,32 @@
 
     function enhanceCodeBlocks() {
         const blocks = document.querySelectorAll('.ql-code-block');
-        blocks.forEach(block => {
-            // Skip if already enhanced
-            if (block.parentElement.classList.contains('code-block-wrapper')) return;
+        if (blocks.length === 0) return;
+
+        // Skip if already enhanced
+        if (blocks[0].parentElement.classList.contains('code-block-wrapper')) return;
+
+        const codeBlockGroups = [];
+        let currentGroup = [];
+
+        blocks.forEach((block, index) => {
+            currentGroup.push(block);
+
+            // Check if the next block is a consecutive code block
+            const nextBlock = blocks[index + 1];
+            const isNextConsecutive = nextBlock &&
+                block.nextElementSibling === nextBlock;
+
+            // If next block is not consecutive or we're at the end, finish this group
+            if (!isNextConsecutive || index === blocks.length - 1) {
+                codeBlockGroups.push([...currentGroup]);
+                currentGroup = [];
+            }
+        });
+
+        // Now wrap each group
+        codeBlockGroups.forEach(group => {
+            if (group.length === 0) return;
 
             const wrapper = document.createElement('div');
             wrapper.className = 'code-block-wrapper';
@@ -135,8 +158,11 @@
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn';
             copyBtn.innerText = 'Copy';
+
+            // Combine text from all blocks in the group
             copyBtn.onclick = () => {
-                navigator.clipboard.writeText(block.innerText).then(() => {
+                const allText = group.map(block => block.innerText).join('\n');
+                navigator.clipboard.writeText(allText).then(() => {
                     copyBtn.innerText = 'Copied!';
                     setTimeout(() => copyBtn.innerText = 'Copy', 2000);
                 });
@@ -144,13 +170,25 @@
 
             header.appendChild(copyBtn);
             wrapper.appendChild(header);
-            wrapper.appendChild(block.cloneNode(true));
-            block.replaceWith(wrapper);
+
+            // Add all blocks from the group to the wrapper
+            group.forEach(block => {
+                wrapper.appendChild(block.cloneNode(true));
+            });
+
+            // Replace the first block with the wrapper, remove the rest
+            group[0].replaceWith(wrapper);
+            for (let i = 1; i < group.length; i++) {
+                group[i].remove();
+            }
         });
     }
 
+
+
     document.addEventListener("DOMContentLoaded", (event) => {
         enhanceCodeBlocks();
+
     });
 
 

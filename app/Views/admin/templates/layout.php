@@ -12,6 +12,7 @@
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <?php echo link_tag('assets/admin/css/styles.css'); ?>
     <?php if ($title === 'Create Post' || $title === 'Edit Post'): ?>
+
         <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
 
     <?php endif; ?>
@@ -32,6 +33,8 @@
         })();
     </script>
     <!-- End Matomo Code -->
+
+
 
 </head>
 

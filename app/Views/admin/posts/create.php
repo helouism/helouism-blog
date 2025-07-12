@@ -97,7 +97,7 @@
             'name' => 'meta_description',
             'id' => 'meta_description',
             'value' => old('meta_description'),
-            'maxlength' => '150',
+            'maxlength' => '255',
             'class' => 'form-control form-control-lg border-0 shadow-sm',
             'placeholder' => 'Enter the meta description'
         ];

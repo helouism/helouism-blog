@@ -64,9 +64,10 @@ class PostController extends BaseController
                 ]
             ],
             'meta_description' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
+                'rules' => 'required|alpha_numeric_punct|max_length[255]',
                 'errors' => [
-                    'required' => 'Meta Description Required',
+                    'required' => 'Meta Description required',
+                    'max_length' => 'Meta Description should be less than 255 characters',
                     'alpha_numeric_punct' => 'Meta Description should be a text'
                 ]
             ],
@@ -177,7 +178,7 @@ class PostController extends BaseController
             'title' => [
                 'rules' => 'required|alpha_numeric_punct|max_length[150]',
                 'errors' => [
-                    'max_length' => 'Post Title too long',
+                    'max_length' => 'Post Title should be less than 150 characters',
                     'required' => 'Post Title Required',
                     'alpha_numeric_punct' => 'Post Title should be a text'
                 ]
@@ -197,10 +198,11 @@ class PostController extends BaseController
                 ]
             ],
             'meta_description' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
+                'rules' => 'required|alpha_numeric_punct|max_length[255]',
                 'errors' => [
                     'required' => 'Meta Description Required',
-                    'alpha_numeric_punct' => 'Meta Description should be a text'
+                    'alpha_numeric_punct' => 'Meta Description should be a text',
+                    'max_length' => 'Meta Description should be less than 255 characters'
                 ]
             ],
             'thumbnail_caption' => [
