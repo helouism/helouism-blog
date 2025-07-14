@@ -20,15 +20,13 @@ class PostController extends BaseController
 
     public function index()
     {
-        //pager initialize
-        $pager = \Config\Services::pager();
+
         $username = auth()->user()->username;
 
         $data = [
             'title' => 'Manage Posts',
-            'posts' => $this->postModel->where('username', $username)->paginate(10, 'post'),
+            'posts' => $this->postModel->where('username', $username)->findAll(),
 
-            'pager' => $this->postModel->pager
         ];
 
         return view('admin/posts/index', $data);
@@ -54,57 +52,69 @@ class PostController extends BaseController
     {
         helper('form');
 
-        $validation = $this->validate([
-            'title' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
-                'errors' => [
-                    'max_length' => 'Post Title too long',
-                    'required' => 'Post Title Required',
-                    'alpha_numeric_punct' => 'Post Title should be a text'
-                ]
-            ],
-            'meta_description' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
-                'errors' => [
-                    'required' => 'Meta Description Required',
-                    'alpha_numeric_punct' => 'Meta Description should be a text'
-                ]
-            ],
-            'thumbnail_caption' => [
-                'rules' => 'required|alpha_numeric_punct',
-                'errors' => [
-                    'required' => 'Post thumbnail caption Required',
-                    'alpha_numeric_punct' => 'Post thumbnail caption should be a text'
-                ]
-            ],
-            'content' => [
-                'rules' => 'required',
-                'errors' => [
-                    'required' => 'Post content required'
-                ]
-            ],
-            'category_name' => [
-                'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
-                'errors' => [
-                    'required' => 'Post category required',
-                    'alpha_numeric_space' => 'Post category should be a text',
-                    'is_not_unique' => 'Selected category does not exist'
-                ]
-            ],
-            'status' => [
-                'rules' => 'required|alpha_dash|in_list[published,draft]',
-                'errors' => [
-                    'required' => 'Post status Required',
-                    'alpha_dash' => 'Post status is not a valid string',
-                    'in_list' => 'Post status is not in list'
-                ]
-            ],
-        ]);
-
-        if (!$validation) {
-            session()->setFlashdata('error', $this->validator->listErrors());
-            return redirect()->to(base_url('admin/posts/create'))->withInput();
+        if (
+            !$this->validate([
+                'title' => [
+                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:!?"\']+$/u]|max_length[150]',
+                    'errors' => [
+                        'max_length' => 'Post Title too long',
+                        'required' => 'Post Title Required',
+                        'regex_match' => 'Post Title should be valid text with allowed punctuation.',
+                    ]
+                ],
+                'slug' => [
+                    'rules' => 'required|is_unique[posts.slug]|max_length[150]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]',
+                    'errors' => [
+                        'max_length' => 'Post Slug too long',
+                        'required' => 'Post Slug Required',
+                        'regex_match' => 'Only lowercase letters, numbers, and hyphens allowed.',
+                        'is_unique' => 'Post Slug already taken'
+                    ]
+                ],
+                'meta_description' => [
+                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
+                    'errors' => [
+                        'required' => 'Meta Description required',
+                        'max_length' => 'Meta Description should be less than 255 characters',
+                        'regex_match' => 'Meta Description should be valid text with allowed punctuation'
+                    ]
+                ],
+                'thumbnail_caption' => [
+                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
+                    'errors' => [
+                        'required' => 'Post thumbnail caption Required',
+                        'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation'
+                    ]
+                ],
+                'content' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Post content required'
+                    ]
+                ],
+                'category_name' => [
+                    'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
+                    'errors' => [
+                        'required' => 'Post category required',
+                        'alpha_numeric_space' => 'Post category should be a text',
+                        'is_not_unique' => 'Selected category does not exist'
+                    ]
+                ],
+                'status' => [
+                    'rules' => 'required|alpha_dash|in_list[published,draft]',
+                    'errors' => [
+                        'required' => 'Post status Required',
+                        'alpha_dash' => 'Post status is not a valid string',
+                        'in_list' => 'Post status is not in list'
+                    ]
+                ],
+            ])
+        ) {
+            $validation = service('validation');
+            return redirect()->back()->withInput()->with('validation', $validation);
         }
+
+
 
         $username = auth()->user()->username;
         $thumbnail = null;
@@ -117,14 +127,14 @@ class PostController extends BaseController
         }
 
         if (!$thumbnail) {
-            session()->setFlashdata('error', 'Please select a thumbnail image');
-            return redirect()->to(base_url('admin/posts/create'))->withInput();
+
+            return redirect()->back()->withInput()->with('validation', 'Please upload an image');
         }
 
         // Insert data into database
         $this->postModel->insert([
             'title' => $this->request->getPost('title'),
-            'slug' => $this->postModel->setSlug($this->request->getPost('title')),
+            'slug' => $this->request->getPost('slug'),
             'meta_description' => $this->request->getPost('meta_description'),
             'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
             'thumbnail_path' => $thumbnail,
@@ -155,7 +165,9 @@ class PostController extends BaseController
             'title' => 'Edit Post',
             'post' => $post,
             'categories' => $this->categoryModel->findAll(),
-            'category_name' => $post_category_id
+            'category_name' => $post_category_id,
+            'validation' => service('validation')
+
         ];
 
 
@@ -173,64 +185,74 @@ class PostController extends BaseController
         }
 
         // Validation rules
-        $validation = $this->validate([
-            'title' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
-                'errors' => [
-                    'max_length' => 'Post Title too long',
-                    'required' => 'Post Title Required',
-                    'alpha_numeric_punct' => 'Post Title should be a text'
-                ]
-            ],
-            'content' => [
-                'rules' => 'required',
-                'errors' => [
-                    'required' => 'Post content required'
-                ]
-            ],
-            'category_name' => [
-                'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
-                'errors' => [
-                    'required' => 'Post category required',
-                    'alpha_numeric_space' => 'Post category should be a text',
-                    'is_not_unique' => 'Selected category does not exist'
-                ]
-            ],
-            'meta_description' => [
-                'rules' => 'required|alpha_numeric_punct|max_length[150]',
-                'errors' => [
-                    'required' => 'Meta Description Required',
-                    'alpha_numeric_punct' => 'Meta Description should be a text'
-                ]
-            ],
-            'thumbnail_caption' => [
-                'rules' => 'max_length[200]|alpha_numeric_punct',
-                'errors' => [
-                    'max_length' => 'Post thumbnail caption should be less than 200 characters',
-                    'required' => 'Post thumbnail caption Required',
-                    'alpha_numeric_punct' => 'Post thumbnail caption should be a text'
-                ]
-            ],
-            'status' => [
-                'rules' => 'required|alpha_dash|in_list[published,draft]',
-                'errors' => [
-                    'required' => 'Post status Required',
-                    'alpha_dash' => 'Post status is not a valid string',
-                    'in_list' => 'Post status is not in list'
-                ]
-            ],
-        ]);
-
-        if (!$validation) {
-            session()->setFlashdata('error', $this->validator->listErrors());
-            return redirect()->to(base_url('admin/posts/edit/' . $id))->withInput();
+        if (
+            !$this->validate([
+                'title' => [
+                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:!?"\']+$/u]|max_length[150]',
+                    'errors' => [
+                        'max_length' => 'Post Title should be less than 150 characters',
+                        'required' => 'Post Title Required',
+                        'regex_match' => 'Post Title should be valid text with allowed punctuation.',
+                    ]
+                ],
+                'slug' => [
+                    'rules' => 'required|is_unique[posts.slug]|max_length[150]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]',
+                    'errors' => [
+                        'max_length' => 'Post Slug too long',
+                        'required' => 'Post Slug Required',
+                        'regex_match' => 'Only lowercase letters, numbers, and hyphens allowed.',
+                        'is_unique' => 'Post Slug already taken'
+                    ]
+                ],
+                'content' => [
+                    'rules' => 'required',
+                    'errors' => [
+                        'required' => 'Post content required'
+                    ]
+                ],
+                'category_name' => [
+                    'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
+                    'errors' => [
+                        'required' => 'Post category required',
+                        'alpha_numeric_space' => 'Post category should be a text',
+                        'is_not_unique' => 'Selected category does not exist'
+                    ]
+                ],
+                'meta_description' => [
+                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
+                    'errors' => [
+                        'required' => 'Meta Description Required',
+                        'regex_match' => 'Meta Description should be valid text with allowed punctuation',
+                        'max_length' => 'Meta Description should be less than 255 characters'
+                    ]
+                ],
+                'thumbnail_caption' => [
+                    'rules' => 'max_length[200]|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]',
+                    'errors' => [
+                        'max_length' => 'Post thumbnail caption should be less than 200 characters',
+                        'required' => 'Post thumbnail caption Required',
+                        'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation',
+                    ]
+                ],
+                'status' => [
+                    'rules' => 'required|alpha_dash|in_list[published,draft]',
+                    'errors' => [
+                        'required' => 'Post status Required',
+                        'alpha_dash' => 'Post status is not a valid string',
+                        'in_list' => 'Post status is not in list'
+                    ]
+                ],
+            ])
+        ) {
+            $validation = service('validation');
+            return redirect()->back()->withInput()->with('validation', $validation);
         }
 
         // Get the new data
         $newData = [
             'title' => $this->request->getPost('title'),
             'meta_description' => $this->request->getPost('meta_description'),
-            'slug' => $this->postModel->setSlug($this->request->getPost('title')),
+            'slug' => $this->request->getPost('slug'),
             'content' => $this->request->getPost('content'),
             'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
             'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name')),
@@ -241,7 +263,7 @@ class PostController extends BaseController
         $changes = false;
 
         // Compare title, content and category
-        foreach (['title', 'content', 'category_id', 'meta_description', 'thumbnail_caption', 'status'] as $field) {
+        foreach (['title', 'slug', 'content', 'category_id', 'meta_description', 'thumbnail_caption', 'status'] as $field) {
             if ($oldData[$field] !== $newData[$field]) {
                 $changes = true;
             }
@@ -268,10 +290,7 @@ class PostController extends BaseController
             return redirect()->to('admin/posts')->with('info', 'No changes');
         }
 
-        // Update the post slug if title changed
-        if ($oldData['title'] !== $newData['title']) {
-            $newData['slug'] = $this->postModel->setSlug($newData['title']);
-        }
+
 
         // Update the post
         try {

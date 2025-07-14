@@ -16,21 +16,7 @@
     <?php endif; ?>
     <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
     <?= $this->renderSection('pageStyles') ?>
-    <!-- Matomo -->
-    <script>
-        var _paq = window._paq = window._paq || [];
-        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-        _paq.push(['trackPageView']);
-        _paq.push(['enableLinkTracking']);
-        (function () {
-            var u = "//stats12.serv00.com/";
-            _paq.push(['setTrackerUrl', u + 'matomo.php']);
-            _paq.push(['setSiteId', '249']);
-            var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
-            g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
-        })();
-    </script>
-    <!-- End Matomo Code -->
+
 
 </head>
 
@@ -48,7 +34,7 @@
         crossorigin="anonymous"></script>
 
     <?php echo script_tag('assets/admin/js/scripts.js'); ?>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
+
 
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
@@ -81,21 +67,6 @@
                 timer: 3000,
                 html: `<?= session()->getFlashdata('success') ?>`,
                 icon: "success"
-            });
-        </script>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('error')): ?>
-        <!-- Sweetalert error message -->
-        <script>
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                title: "Error",
-                showConfirmButton: false,
-                timer: 3000,
-                html: `<?= session()->getFlashdata('error') ?>`,
-                icon: "error"
             });
         </script>
     <?php endif; ?>

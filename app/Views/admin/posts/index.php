@@ -52,9 +52,7 @@
             </table>
         </div>
     </div>
-    <div class="mt-4">
-        <?php echo $pager->links('post', 'bootstrap_pagination') ?>
-    </div>
+
 </div>
 
 <?= $this->endSection() ?>

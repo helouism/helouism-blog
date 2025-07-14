@@ -71,37 +71,33 @@
 
         ];
         echo form_label('Post Title', 'title', $attributes); ?>
-
-        <?php
-        $data = [
-            'name' => 'title',
-            'id' => 'title',
-            'placeholder' => 'Enter a descriptive title',
-            'maxlength' => '150',
-            'class' => 'form-control form-control-lg border-0 shadow-sm',
-            'value' => set_value('title'),
-            'required' => true,
-        ];
-        echo form_input($data); ?>
+        <input type="text" id="title" maxlength="150"
+            class="form-control form-control-lg border-0 shadow-sm <?= (validation_show_error('title')) ? 'is-invalid' : ''; ?>"
+            name="title" value="<?= set_value('title') ?>" placeholder="Enter a descriptive title" required>
+        <div class="invalid-feedback">
+            <?= validation_show_error('title'); ?>
+        </div>
     </div>
 
     <div class="mb-4">
-        <?php $attributes = [
-            'class' => 'form-label text-sm fw-medium',
+        <label for="slug" class="form-label text-sm fw-medium">Post Slug</label>
+        <input type="text" id="slug" value="<?= set_value('slug') ?>"
+            class="form-control form-control-lg border-0 shadow-sm  <?= (validation_show_error('slug')) ? 'is-invalid' : ''; ?>"
+            name="slug" placeholder="Enter a descriptive title" required>
+        <div class="invalid-feedback">
+            <?= validation_show_error('slug') ?>
+        </div>
+    </div>
 
-        ];
-
-        echo form_label('Meta Description', 'meta_description', $attributes); ?>
-
-        <?php $data = [
-            'name' => 'meta_description',
-            'id' => 'meta_description',
-            'value' => set_value('meta_description'),
-            'maxlength' => '150',
-            'class' => 'form-control form-control-lg border-0 shadow-sm',
-            'placeholder' => 'Enter the meta description'
-        ];
-        echo form_input($data); ?>
+    <div class="mb-4">
+        <label for="meta_description" class="form-label text-sm fw-medium">Meta Description</label>
+        <input name="meta_description" id="meta_description" value="<?= set_value('meta_description') ?>"
+            maxlength="150"
+            class="form-control form-control-lg border-0 shadow-sm <?= (validation_show_error('meta_description')) ? 'is-invalid' : ''; ?>"
+            placeholder="Enter the meta description">
+        <div class="invalid-feedback">
+            <?= validation_show_error('meta_description'); ?>
+        </div>
     </div>
 
     <div class="row mb-4">
@@ -111,40 +107,45 @@
             ];
             echo form_label('Featured Image', 'thumbnail_path', $attributes); ?>
             <input type="file" name="thumbnail_path" id="thumbnail_path"
-                class="form-control border-0 shadow-sm filepond">
-
+                class="form-control border-0 shadow-sm filepond <?= (validation_show_error('thumbnail_path')) ? 'is-invalid' : ''; ?>">
+            <div class="invalid-feedback">
+                <?= validation_show_error('thumbnail_path'); ?>
+            </div>
             <div class="form-text">Recommended size: 1200x630px</div>
+
 
             <!-- Hidden input for temp file ID -->
             <input type="hidden" name="temp_file_id" id="temp_file_id" value="">
 
         </div>
 
+
         <div class="col-md-6">
             <label for="category_name" class="form-label text-sm fw-medium">Category</label>
-            <?php
-            $options = ['' => 'Select a category'];
-            foreach ($categories as $category) {
-                $options[$category['name']] = $category['name'];
-            }
-            echo form_dropdown('category_name', $options, set_value('category_name'), 'class="form-control border-0 shadow-sm"');
-            ?>
+            <select name="category_name" id="category_name"
+                class="form-control border-0 shadow-sm <?= (validation_show_error('category_name')) ? 'is-invalid' : ''; ?>">
+                <?php foreach ($categories as $category) ?>
+                <option selected value="">Select a category</option>
+                <option value="<?= esc($category['name']) ?>"><?= esc($category['name']) ?></option>
+            </select>
+
+            <div class="invalid-feedback">
+                <?= validation_show_error('category_name'); ?>
+            </div>
         </div>
     </div>
 
+
     <div class="mb-4">
         <label for="thumbnail_caption" class="form-label text-sm fw-medium">Image Caption</label>
-        <?php
-        $data = [
-            'name' => 'thumbnail_caption',
-            'id' => 'thumbnail_caption',
-            'placeholder' => 'Describe your featured image',
-            'maxlength' => '200',
-            'class' => 'form-control border-0 shadow-sm',
-            'value' => set_value('thumbnail_caption'),
-            'required' => true,
-        ];
-        echo form_input($data); ?>
+
+        <input name="thumbnail_caption" id="thumbnail_caption" maxlength="200"
+            placeholder="Describe your featured image"
+            class="form-control border-0 shadow-sm <?= (validation_show_error('thumbnail_caption')) ? 'is-invalid' : ''; ?>"
+            value="<?= set_value('thumbnail_caption') ?>" required>
+        <div class="invalid-feedback">
+            <?= validation_show_error('thumbnail_caption'); ?>
+        </div>
     </div>
 
     <div class="mb-4">
@@ -154,12 +155,16 @@
     </div>
 
     <div class="mb-4">
-        <label for="status" class="form-label text-sm fw-medium">Post Status</label>
-        <select name="status" class="form-select" aria-label="status">
+        <select name="status" id="status"
+            class="form-control border-0 shadow-sm <?= (validation_show_error('status')) ? 'is-invalid' : ''; ?>">
+            <option selected value="">Select Post Status</option>
             <option value="published">Published</option>
-            <option selected value="draft">Draft</option>
-
+            <option value="draft">Draft</option>
         </select>
+
+        <div class="invalid-feedback">
+            <?= validation_show_error('status'); ?>
+        </div>
 
     </div>
 

@@ -81,31 +81,36 @@
         <p class="text-muted small">Update your blog post details</p>
     </div>
 
-    <?php echo form_open_multipart('admin/posts/update/' . $post['id'], ['id' => 'editPostForm', 'class' => 'needs-validation']); ?>
+    <?php echo form_open_multipart('admin/posts/update/' . $post['id'], ['id' => 'editPostForm']); ?>
     <div class="mb-4">
         <label for="title" class="form-label text-sm fw-medium">Post Title</label>
         <input type="text" id="title" value="<?= esc($post['title']) ?>"
-            class="form-control form-control-lg border-0 shadow-sm" name="title" placeholder="Enter a descriptive title"
-            required>
+            class="form-control form-control-lg border-0 shadow-sm <?= (validation_show_error('title')) ? 'is-invalid' : ''; ?>"
+            name="title" placeholder="Enter a descriptive title" required>
+        <div class="invalid-feedback">
+            <?= validation_show_error('title'); ?>
+        </div>
     </div>
+
     <div class="mb-4">
-        <?php $attributes = [
-            'class' => 'form-label text-sm fw-medium',
+        <label for="slug" class="form-label text-sm fw-medium">Post Slug</label>
+        <input type="text" id="slug" value="<?= esc($post['slug']) ?>"
+            class="form-control form-control-lg border-0 shadow-sm  <?= (validation_show_error('slug')) ? 'is-invalid' : ''; ?>"
+            name="slug" placeholder="Enter a descriptive title" required>
+        <div class="invalid-feedback">
+            <?= validation_show_error('slug') ?>
+        </div>
+    </div>
 
-        ];
-
-        echo form_label('Meta Description', 'meta_description', $attributes); ?>
-
-
-        <?php $data = [
-            'name' => 'meta_description',
-            'id' => 'meta_description',
-            'value' => esc($post['meta_description']),
-            'maxlength' => '150',
-            'class' => 'form-control form-control-lg border-0 shadow-sm',
-            'placeholder' => 'Enter the meta description'
-        ];
-        echo form_input($data); ?>
+    <div class="mb-4">
+        <label for="meta_description" class="form-label text-sm fw-medium">Meta Description</label>
+        <input name="meta_description" id="meta_description" value="<?= esc($post['meta_description']) ?>"
+            maxlength="150"
+            class="form-control form-control-lg border-0 shadow-sm <?= (validation_show_error('meta_description')) ? 'is-invalid' : ''; ?>"
+            placeholder="Enter the meta description">
+        <div class="invalid-feedback">
+            <?= validation_show_error('meta_description'); ?>
+        </div>
     </div>
 
     <div class="row mb-4">
@@ -132,27 +137,27 @@
 
         <div class="mb-4">
             <label for="thumbnail_caption" class="form-label text-sm fw-medium">Image Caption</label>
-            <?php
-            $data = [
-                'name' => 'thumbnail_caption',
-                'id' => 'thumbnail_caption',
-                'placeholder' => 'Describe your featured image',
-                'maxlength' => '200',
-                'class' => 'form-control border-0 shadow-sm',
-                'value' => esc($post['thumbnail_caption']),
-                'required' => true,
-            ];
-            echo form_input($data); ?>
+
+            <input name="thumbnail_caption" id="thumbnail_caption" maxlength="200"
+                placeholder="Describe your featured image"
+                class="form-control border-0 shadow-sm <?= (validation_show_error('thumbnail_caption')) ? 'is-invalid' : ''; ?>"
+                value="<?= esc($post['thumbnail_caption']) ?>" required>
+            <div class="invalid-feedback">
+                <?= validation_show_error('thumbnail_caption'); ?>
+            </div>
         </div>
         <div class="col-md-6">
             <label for="category_name" class="form-label text-sm fw-medium">Category</label>
-            <?php
-            $options = ['' => 'Select a category'];
-            foreach ($categories as $category) {
-                $options[$category['name']] = $category['name'];
-            }
-            echo form_dropdown('category_name', $options, $category_name, 'id="category_name" class="form-control border-0 shadow-sm"');
-            ?>
+            <select name="category_name" id="category_name"
+                class="form-control border-0 shadow-sm <?= (validation_show_error('category_name')) ? 'is-invalid' : ''; ?>">
+                <?php foreach ($categories as $category) ?>
+                <option value="">Select a category</option>
+                <option value="<?= esc($category['name']) ?>"><?= esc($category['name']) ?></option>
+            </select>
+
+            <div class="invalid-feedback">
+                <?= validation_show_error('category_name'); ?>
+            </div>
         </div>
     </div>
 
@@ -166,15 +171,17 @@
     </div>
 
     <div class="mb-4">
+        <select name="status" id="status"
+            class="form-control border-0 shadow-sm <?= (validation_show_error('status')) ? 'is-invalid' : ''; ?>">
+            <option value="">Select Post Status</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+        </select>
 
-        <?php
-        $options = [
-            '' => 'Select Post Status',
-            'published' => 'Published',
-            'draft' => 'Draft'
-        ];
-        echo form_dropdown('status', $options, $post['status'], 'id="status" class="form-control border-0 shadow-sm"');
-        ?>
+        <div class="invalid-feedback">
+            <?= validation_show_error('status'); ?>
+        </div>
+
     </div>
 
     <div class="d-flex gap-2">
