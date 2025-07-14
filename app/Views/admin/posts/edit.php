@@ -126,6 +126,7 @@
             $data = [
                 'name' => 'thumbnail_path',
                 'id' => 'thumbnail_path',
+
                 'class' => 'form-control border-0 shadow-sm filepond', // add filepond class
             ];
             echo form_upload($data); ?>
@@ -202,6 +203,7 @@
     const quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
+
             toolbar: [
                 ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                 ['blockquote', 'code-block'],

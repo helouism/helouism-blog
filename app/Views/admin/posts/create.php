@@ -150,8 +150,9 @@
 
     <div class="mb-4">
         <label for="content" class="form-label text-sm fw-medium">Content</label>
-        <input type="hidden" id="content" name="content" value="<?= set_value('content') ?>">
-        <div id="editor" class="shadow-sm rounded" style="min-height: 300px;"><?= set_value('content') ?></div>
+        <input type="hidden" id="content" name="content" value="<?= old('content') ?>">
+
+        <div id="editor" class="shadow-sm rounded" style="min-height: 300px;"></div>
     </div>
 
     <div class="mb-4">
@@ -184,6 +185,7 @@
     const quill = new Quill('#editor', {
         theme: 'snow',
         modules: {
+
             toolbar: [
                 ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
                 ['blockquote', 'code-block'],
@@ -207,11 +209,17 @@
         },
     });
 
+    // Set old content if it exists (after validation errors)
+    const oldContent = document.querySelector("input[name='content']").value;
+    if (oldContent) {
+        quill.root.innerHTML = oldContent;
+    }
+
     quill.on('text-change', function (delta, oldDelta, source) {
         document.querySelector("input[name='content']").value = quill.root.innerHTML;
     });
 
-    // FilePond initialization with server configuration
+
     // FilePond initialization with image resize and compression
     const pond = FilePond.create(document.querySelector('input[name="thumbnail_path"]'), {
         allowImagePreview: true,

@@ -37,11 +37,7 @@
                             </a>
                         </h5>
                         <div class="card-text mb-3">
-                            <?php
-                            // Strip HTML and limit the content preview
-                            $preview = strip_tags($post['content']);
-                            echo esc(mb_substr($preview, 0, 150)) . '...';
-                            ?>
+                            <?= esc($post['meta_description']) ?>
                         </div>
                         <div class="card-text">
                             <small class="text-muted">

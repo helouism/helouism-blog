@@ -8,6 +8,61 @@
   margin-bottom: 1.5rem;
 }
 
+.ql-code-block {
+  font-family: "Fira Code", "Monaco", Consolas, "Lucida Console", monospace;
+  font-size: 0.9em;
+  background-color: #f8f8f8;
+  padding: 12px 16px;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  line-height: 1.5 !important;
+  overflow-x: auto !important;
+  box-shadow: none !important;
+}
+
+/* When code blocks are inside wrapper, style them differently */
+.code-block-wrapper .ql-code-block:first-child {
+  border-top-left-radius: 8px !important;
+  border-top-right-radius: 8px !important;
+}
+
+.code-block-wrapper .ql-code-block:last-child {
+  border-bottom-left-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+.code-block-wrapper {
+  margin: 1em 0;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.code-block-header {
+  background: #f5f5f5;
+  padding: 5px 10px;
+  font-size: 0.85em;
+  display: flex;
+  justify-content: flex-end;
+  border-bottom: 1px solid #ddd;
+}
+
+.copy-btn {
+  background: #e0e0e0;
+  border: none;
+  padding: 2px 8px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 0.85em;
+  border-radius: 3px;
+  transition: background 0.3s;
+}
+
+.copy-btn:hover {
+  background: #ccc;
+}
+
 .post-meta {
   font-size: 0.95rem;
 }
@@ -24,29 +79,6 @@
   font-size: 0.9rem;
   font-style: italic;
   color: #6c757d;
-}
-/* quill style */
-.ql-font-monospace {
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
-  font-size: 0.9em;
-
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-
-.ql-code-block {
-  font-family: Monaco, Consolas, "Lucida Console", monospace;
-  font-size: 0.9em;
-
-  padding: 10px;
-
-  border-radius: 5px;
-  border-left: 4px solid #ccc;
-  white-space: pre-wrap;
-  overflow-x: auto;
-}
-.ql-font-serif {
-  font-family: Georgia, Times, "Times New Roman", serif;
 }
 
 /* Responsive typography */

@@ -33,10 +33,8 @@
                                     </a>
                                 </h2>
                                 <div class="card-text mb-2">
-                                    <?php
-                                    $preview = strip_tags($post['content']);
-                                    echo esc(mb_substr($preview, 0, 200)) . '...';
-                                    ?>
+                                    <?= esc($post['meta_description']) ?>
+
                                 </div>
                                 <div class="card-text d-flex justify-content-between align-items-center">
                                     <div class="post-meta small">

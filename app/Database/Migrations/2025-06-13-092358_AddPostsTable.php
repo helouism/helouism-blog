@@ -27,7 +27,7 @@ class AddPostsTable extends Migration
             ],
             'meta_description' => [
                 'type' => 'VARCHAR',
-                'constraint' => 150,
+                'constraint' => 255,
             ],
             'thumbnail_path' => [
                 'type' => 'VARCHAR',
