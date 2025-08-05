@@ -62,24 +62,6 @@ class PostModel extends Model
         return $postItem;
     }
 
-    public function setSlug($title)
-    {
-        $builder = $this->table($this->table);
-        $url = strip_tags($title); #hilangkan tag html
-        $url = preg_replace('/[^A-Za-z0-9]/', " ", $url);
-        $url = trim($url);
-        $url = preg_replace('/[^A-Za-z0-9]/', "-", $url);
-        $url = strtolower($url);
-
-        $builder->where('title', $title);
-        $jumlah = $builder->countAllResults();
-        if ($jumlah > 0) {
-            $jumlah = $jumlah + 1;
-            return $url . "-" . $jumlah;
-        }
-        return $url;
-    }
-
     /**
      * Get the post archive grouped by year and month.
      *
