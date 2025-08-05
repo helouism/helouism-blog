@@ -37,13 +37,13 @@ class CategoryModel extends Model
     // Callbacks
     protected $allowCallbacks = true;
     protected $beforeInsert = [];
-    protected $afterInsert = [];
+    protected $afterInsert = ['clearCache'];
     protected $beforeUpdate = [];
-    protected $afterUpdate = [];
+    protected $afterUpdate = ['clearCache'];
     protected $beforeFind = [];
     protected $afterFind = [];
     protected $beforeDelete = [];
-    protected $afterDelete = [];
+    protected $afterDelete = ['clearCache'];
 
     public function setSlug($name)
     {
@@ -69,8 +69,6 @@ class CategoryModel extends Model
         $category = $this->where('name', $category_name)
             ->first();
         return $category['id'];
-
-
     }
 
     public function getNameFromId($category_id): string
@@ -97,6 +95,51 @@ class CategoryModel extends Model
         return $counts;
     }
 
+    // New methods for sitemap functionality
+    
+    /**
+     * Get categories data for sitemap generation
+     * Only selects necessary fields to reduce memory usage
+     */
+    public function getSitemapCategories(): array
+    {
+        $cacheKey = 'sitemap_categories';
+        $cache = service('cache');
+        
+        $categories = $cache->get($cacheKey);
+        if ($categories === null) {
+            $categories = $this->select('slug, created_at')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+            
+            // Cache for 30 minutes
+            $cache->save($cacheKey, $categories, 1800);
+        }
+        
+        return $categories;
+    }
+    
+    /**
+     * Get the latest category creation date for sitemap lastmod
+     * This helps with sitemap cache invalidation
+     */
+    public function getLatestCategoryDate(): string
+    {
+        $result = $this->select('MAX(created_at) as latest_date')
+            ->first();
+            
+        return $result['latest_date'] ?? date('Y-m-d H:i:s');
+    }
 
-
+    protected function clearCache(array $data)
+    {
+        $cache = service('cache');
+        
+        // Clear all cache including sitemap cache when categories are modified
+        $cache->delete('sitemap_xml');
+        $cache->delete('sitemap_categories');
+        
+        // Clear general cache
+        $cache->clean();
+    }
 }

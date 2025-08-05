@@ -52,4 +52,23 @@
         <?php echo $pager->links('category', 'bootstrap_pagination') ?>
     </div>
 </div>
+
+
+<?= $this->endSection() ?>
+<?= $this->section('scripts') ?>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<?php if (session()->getFlashdata('success')): ?>
+    <!-- Sweetalert success message -->
+    <script>
+        Swal.fire({
+            toast: true,
+            position: "top-end",
+            title: "Success",
+            showConfirmButton: false,
+            timer: 3000,
+            html: `<?= session()->getFlashdata('success') ?>`,
+            icon: "success"
+        });
+    </script>
+<?php endif; ?>
 <?= $this->endSection() ?>

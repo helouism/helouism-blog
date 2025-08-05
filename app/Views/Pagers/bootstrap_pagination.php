@@ -3,7 +3,7 @@
         <?php if ($pager->hasPrevious()): ?>
             <li class="page-item">
                 <a href="<?= $pager->getPrevious() ?>" class="page-link" aria-label="<?= lang('Pager.previous') ?>">
-                    <span>«</span>
+                    <span aria-hidden="true">&laquo;</span>
                 </a>
             </li>
         <?php endif ?>
@@ -19,7 +19,7 @@
         <?php if ($pager->hasNext()): ?>
             <li class="page-item">
                 <a href="<?= $pager->getNext() ?>" aria-label="<?= lang('Pager.next') ?>" class="page-link">
-                    <span aria-hidden="true">»</span>
+                     <span aria-hidden="true">&raquo;</span>    
                 </a>
             </li>
         <?php endif ?>

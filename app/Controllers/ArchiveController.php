@@ -5,17 +5,14 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 use CodeIgniter\HTTP\ResponseInterface;
 use App\Models\PostModel;
-use App\Models\CategoryModel;
 
 class ArchiveController extends BaseController
 {
     protected $postModel;
-    protected $categoryModel;
 
     public function __construct()
     {
         $this->postModel = new PostModel();
-        $this->categoryModel = new CategoryModel();
     }
 
     /**
@@ -43,8 +40,7 @@ class ArchiveController extends BaseController
             'month' => $month,
             'monthName' => $monthName,
             'pager' => $this->postModel->pager,
-            'categories' => $this->categoryModel->findAll(),
-
+        
             'archive' => $this->postModel->getPostArchive()
         ];
 

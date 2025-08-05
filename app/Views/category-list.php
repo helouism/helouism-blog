@@ -1,9 +1,86 @@
 <?= $this->extend("templates/layout") ?>
+<?= $this->section("pageStyles") ?>
+<style>
+ 
+    .category-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        text-align: center;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        
+    }
+
+    .category-image-wrapper {
+        position: relative;
+        height: 200px;
+        overflow: hidden;
+        border-radius: 0.375rem 0.375rem 0 0;
+    }
+
+    .category-image {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .category-card:hover .category-image {
+        transform: scale(1.05);
+    }
+
+    .category-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg,
+                rgba(0, 0, 0, 0.2) 0%,
+                rgba(0, 0, 0, 0.6) 100%);
+    }
+
+    .category-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .card-body {
+        border-radius: 0 0 0.375rem 0.375rem;
+    }
+
+    .stats-item {
+        padding: 1rem 2rem;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .display-4 {
+            font-size: 2.5rem;
+        }
+
+        .stats-item {
+            padding: 1rem;
+        }
+    }
+</style>
+<?= $this->endSection() ?>
 <?= $this->section("content") ?>
 <!-- Page Header -->
 <div class="row mb-5">
     <div class="col-12 text-center">
         <h1 class="display-4 mb-3">Browse Categories</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a href="<?= base_url('/') ?>" class="text-decoration-none">Home</a>
+                </li>
+                <li class="breadcrumb-item active" aria-current="page">Categories</li>
+            </ol>
+        </nav>
 
     </div>
 </div>
@@ -24,7 +101,7 @@
             $latestPost = $details['latestPost'];
             ?>
             <div class="col-lg-4 col-md-6">
-                <div class="card h-100 category-card hover-card">
+                <div class="card text-white bg-primary h-100 category-card hover-card">
                     <div class="category-image-wrapper">
                         <?php if ($latestPost && $latestPost['thumbnail_path']): ?>
                             <img loading="lazy" decoding="async"
@@ -43,8 +120,7 @@
                             <?= $postCount ?>         <?= $postCount === 1 ? 'Post' : 'Posts' ?>
                         </p>
                         <div class="mt-auto">
-                            <a href="<?= base_url('category/' . $category['slug']) ?>" class="btn stretched-link"
-                                target="_blank">
+                            <a href="<?= base_url('category/' . $category['slug']) ?>" class="btn stretched-link btn-dark">
                                 View Posts
                             </a>
                         </div>

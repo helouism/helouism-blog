@@ -14,7 +14,7 @@ class SearchController extends BaseController
     public function __construct()
     {
         $this->postModel = new PostModel();
-        $this->cache = \Config\Services::cache();
+        $this->cache = service('cache');
     }
 
     public function index()
@@ -35,7 +35,7 @@ class SearchController extends BaseController
 
         if (!$validation) {
             session()->setFlashdata('search_errors', $this->validator->getErrors());
-            return redirect()->back()->withInput();
+             return redirect()->to('/');
         }
 
         $query = $this->request->getGet('q');
@@ -64,7 +64,7 @@ class SearchController extends BaseController
                 $this->cache->save($cacheKey, [
                     'total_results' => $total_results,
                     'search_results' => $search_results,
-                ], 900); // 15 minutes
+                ], 432000); // 15 minutes
             }
         }
 

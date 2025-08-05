@@ -11,11 +11,18 @@ class PostController extends BaseController
 {
     protected $categoryModel;
     protected $postModel;
+    protected $image;
+    protected $validation;
+    protected $ckEditorLicenseKey;
 
     public function __construct()
     {
         $this->categoryModel = new CategoryModel();
         $this->postModel = new PostModel();
+        $this->image = service('image');
+        $this->validation = service('validation');
+        $this->ckEditorLicenseKey = ENVIRONMENT !== 'production' ? env('CKEDITOR_LICENSE_DEV_KEY') : env('CKEDITOR_LICENSE_PROD_KEY');
+
     }
 
     public function index()
@@ -40,7 +47,9 @@ class PostController extends BaseController
         helper('form');
         $data = [
             'title' => 'Create Post',
-            'categories' => $this->categoryModel->findAll() // Get all categories
+            'categories' => $this->categoryModel->asObject()->findAll(),
+            'validation' => service('validation'),
+            'ckEditorLicenseKey' => $this->ckEditorLicenseKey,
         ];
         return view('admin/posts/create', $data);
     }
@@ -51,52 +60,62 @@ class PostController extends BaseController
     public function store()
     {
         helper('form');
+        if ($this->request->isAjax()) {
 
-        if (
-            !$this->validate([
+            $this->validate([
                 'title' => [
-                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:!?"\']+$/u]|max_length[150]',
+                    'rules' => 'required|max_length[255]',
                     'errors' => [
-                        'max_length' => 'Post Title too long',
+                        'max_length' => 'Post Should be 255 chars or less',
                         'required' => 'Post Title Required',
-                        'regex_match' => 'Post Title should be valid text with allowed punctuation.',
+
                     ]
                 ],
                 'slug' => [
-                    'rules' => 'required|is_unique[posts.slug]|max_length[150]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]',
+                    'rules' => 'required|is_unique[posts.slug]|max_length[255]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]',
                     'errors' => [
-                        'max_length' => 'Post Slug too long',
+                        'max_length' => 'Post Slug should be 255 chars or less',
                         'required' => 'Post Slug Required',
                         'regex_match' => 'Only lowercase letters, numbers, and hyphens allowed.',
-                        'is_unique' => 'Post Slug already taken'
+                        'is_unique' => '{value} already taken'
                     ]
                 ],
                 'meta_description' => [
-                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
+                    'rules' => 'required|max_length[255]',
                     'errors' => [
                         'required' => 'Meta Description required',
                         'max_length' => 'Meta Description should be less than 255 characters',
-                        'regex_match' => 'Meta Description should be valid text with allowed punctuation'
+
+                    ]
+                ],
+                'thumbnail_path' => [
+                    'rules' => 'uploaded[thumbnail_path]|is_image[thumbnail_path]|max_size[thumbnail_path,2048]|ext_in[thumbnail_path,jpg,jpeg,webp,png,gif]',
+                    'errors' => [
+                        'uploaded' => 'Post thumbnail is required',
+                        'is_image' => 'Post thumbnail must be an image',
+                        'max_size' => 'Post thumbnail should not be larger than 2MB',
+                        'ext_in' => 'Post thumbnail must be a valid image format (jpg, jpeg, png, gif, webp)'
                     ]
                 ],
                 'thumbnail_caption' => [
-                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
+                    'rules' => 'required|regex_match[/^[a-zA-Z0-9\s\-_.,!?()&:;"\']+$/]|max_length[255]',
                     'errors' => [
                         'required' => 'Post thumbnail caption Required',
                         'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation'
                     ]
                 ],
                 'content' => [
-                    'rules' => 'required',
+                    'rules' => 'required|min_length[20]',
                     'errors' => [
-                        'required' => 'Post content required'
+                        'required' => 'Post content required',
+                        'min_length' => 'Post content should be at least 20 characters long'
                     ]
                 ],
-                'category_name' => [
-                    'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
+                'category_id' => [
+                    'rules' => 'required|is_natural_no_zero|is_not_unique[categories.id]',
                     'errors' => [
                         'required' => 'Post category required',
-                        'alpha_numeric_space' => 'Post category should be a text',
+                        'is_natural_no_zero' => 'Post category id should be a number',
                         'is_not_unique' => 'Selected category does not exist'
                     ]
                 ],
@@ -108,44 +127,78 @@ class PostController extends BaseController
                         'in_list' => 'Post status is not in list'
                     ]
                 ],
-            ])
-        ) {
-            $validation = service('validation');
-            return redirect()->back()->withInput()->with('validation', $validation);
+            ]);
+
+
+            if ($this->validation->run() === FALSE) {
+                $errors = $this->validation->getErrors();
+                return $this->response->setJSON([
+                    'status' => 0,
+                    'token' => csrf_hash(),
+                    'error' => $errors
+                ]);
+            } else {
+                $username = auth()->user()->username;
+                $path = 'uploads/thumbnails/';
+                $file = $this->request->getFile('thumbnail_path');
+                $filename = $file->getRandomName();
+
+                // Create thumbnails directory inside of uploads directory inside public folder if not exits
+                if (!is_dir($path)) {
+                    mkdir($path, 0755, true);
+                }
+
+                // Move the uploaded file to the thumbnails directory
+                if ($file->move($path, $filename)) {
+                    $this->image->withFile($path . $filename)
+                        ->convert(IMAGETYPE_WEBP)
+                        ->save($path . $filename);
+
+
+                } else {
+                    return $this->response->setJSON([
+                        'status' => 0,
+                        'msg' => 'Failed to upload thumbnail',
+                        'token' => csrf_hash()
+                    ]);
+                }
+
+                // Insert data into database
+                $post_save = $this->postModel->insert([
+                    'title' => $this->request->getPost('title', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                    'slug' => $this->request->getPost('slug'),
+                    'meta_description' => $this->request->getPost('meta_description', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                    'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
+                    'thumbnail_path' => $filename,
+                    'username' => $username,
+                    'content' => $this->request->getPost('content'),
+                    'category_id' => $this->request->getPost('category_id'),
+                    'status' => $this->request->getPost('status')
+                ]);
+
+                if ($post_save) {
+
+                    return $this->response->setJSON([
+                        'status' => 1,
+                        'msg' => 'Post created successfully',
+                        'token' => csrf_hash()
+                    ]);
+                } else {
+                    return $this->response->setJSON([
+                        'status' => 0,
+                        'msg' => 'Failed to create post',
+                        'token' => csrf_hash()
+                    ]);
+                }
+            }
+
+        } else {
+            return $this->response->setJSON([
+                'status' => 0,
+                'msg' => 'Invalid request',
+                'token' => csrf_hash()
+            ]);
         }
-
-
-
-        $username = auth()->user()->username;
-        $thumbnail = null;
-
-        // Handle thumbnail from FilePond
-        $tempFileId = $this->request->getPost('temp_file_id');
-
-        if ($tempFileId) {
-            $thumbnail = $this->moveFromTempToPermanent($tempFileId);
-        }
-
-        if (!$thumbnail) {
-
-            return redirect()->back()->withInput()->with('validation', 'Please upload an image');
-        }
-
-        // Insert data into database
-        $this->postModel->insert([
-            'title' => $this->request->getPost('title'),
-            'slug' => $this->request->getPost('slug'),
-            'meta_description' => $this->request->getPost('meta_description'),
-            'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
-            'thumbnail_path' => $thumbnail,
-            'username' => $username,
-            'content' => $this->request->getPost('content'),
-            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name')),
-            'status' => $this->request->getPost('status')
-        ]);
-
-        session()->setFlashdata('success', 'New post added');
-        return redirect()->to(base_url('admin/posts'));
     }
 
     /**
@@ -154,19 +207,20 @@ class PostController extends BaseController
     public function edit($id)
     {
         helper('form');
-        $post = $this->postModel->find($id);
+        $post = $this->postModel->asObject()->find($id);
 
         if (!$post) {
             return redirect()->to('admin/posts')->with('error', 'Post not found');
         }
 
-        $post_category_id = $this->categoryModel->getNameFromId($post['category_id']);
+
         $data = [
             'title' => 'Edit Post',
             'post' => $post,
-            'categories' => $this->categoryModel->findAll(),
-            'category_name' => $post_category_id,
-            'validation' => service('validation')
+            'categories' => $this->categoryModel->asObject()->findAll(),
+            'ckEditorLicenseKey' => $this->ckEditorLicenseKey,
+
+
 
         ];
 
@@ -174,131 +228,237 @@ class PostController extends BaseController
         return view('admin/posts/edit', $data);
     }
 
-    public function update($id)
+    public function update()
     {
+
         helper('form');
 
-        $oldData = $this->postModel->find($id);
+        if ($this->request->isAjax()) {
+            $post_id = $this->request->getVar('post_id');
 
-        if (!$oldData) {
-            return redirect()->to('admin/posts')->with('error', 'Post not found');
-        }
+            // IF Form request has thumbnail
+            if (isset($_FILES['thumbnail_path']) && !empty($_FILES['thumbnail_path']['name'])) {
+                $this->validate([
+                    'title' => [
+                        'rules' => 'required|max_length[255]',
+                        'errors' => [
+                            'max_length' => 'Post Should be 255 chars or less',
+                            'required' => 'Post Title Required',
+                        ]
+                    ],
+                    'slug' => [
+                        'rules' => 'required|max_length[255]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]|is_unique[posts.slug,id,' . $post_id . ']',
+                        'errors' => [
+                            'max_length' => 'Post Slug should be 255 chars or less',
+                            'required' => 'Post Slug Required',
+                            'regex_match' => 'Only lowercase letters, numbers, and hyphens allowed.',
+                            'is_unique' => '{value} already taken'
+                        ]
+                    ],
+                    'meta_description' => [
+                        'rules' => 'required|max_length[255]',
+                        'errors' => [
+                            'required' => 'Meta Description required',
+                            'max_length' => 'Meta Description should be less than 255 characters',
+                        ]
+                    ],
+                    'thumbnail_path' => [
+                        'rules' => 'uploaded[thumbnail_path]|is_image[thumbnail_path]|max_size[thumbnail_path,2048]|ext_in[thumbnail_path,jpg,jpeg,webp,png,gif]',
+                        'errors' => [
+                            'uploaded' => 'Post thumbnail is required',
+                            'is_image' => 'Post thumbnail must be an image',
+                            'max_size' => 'Post thumbnail should not be larger than 2MB',
+                            'ext_in' => 'Post thumbnail must be a valid image format (jpg, jpeg, png, gif, webp)'
+                        ]
+                    ],
+                    'thumbnail_caption' => [
+                        'rules' => 'required|regex_match[/^[a-zA-Z0-9\s\-_.,!?()&:;"\']+$/]|max_length[255]',
+                        'errors' => [
+                            'required' => 'Post thumbnail caption Required',
+                            'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation'
+                        ]
+                    ],
+                    'content' => [
+                        'rules' => 'required|min_length[20]',
+                        'errors' => [
+                            'required' => 'Post content required',
+                            'min_length' => 'Post content should be at least 20 characters long'
+                        ]
+                    ],
+                    'category_id' => [
+                        'rules' => 'required|is_natural_no_zero|is_not_unique[categories.id]',
+                        'errors' => [
+                            'required' => 'Post category required',
+                            'is_natural_no_zero' => 'Post category id should be a number',
+                            'is_not_unique' => 'Selected category does not exist'
+                        ]
+                    ],
+                    'status' => [
+                        'rules' => 'required|alpha_dash|in_list[published,draft]',
+                        'errors' => [
+                            'required' => 'Post status Required',
+                            'alpha_dash' => 'Post status is not a valid string',
+                            'in_list' => 'Post status is not in list'
+                        ]
+                    ],
 
-        // Validation rules
-        if (
-            !$this->validate([
-                'title' => [
-                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:!?"\']+$/u]|max_length[150]',
-                    'errors' => [
-                        'max_length' => 'Post Title should be less than 150 characters',
-                        'required' => 'Post Title Required',
-                        'regex_match' => 'Post Title should be valid text with allowed punctuation.',
-                    ]
-                ],
-                'slug' => [
-                    'rules' => 'required|is_unique[posts.slug]|max_length[150]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]',
-                    'errors' => [
-                        'max_length' => 'Post Slug too long',
-                        'required' => 'Post Slug Required',
-                        'regex_match' => 'Only lowercase letters, numbers, and hyphens allowed.',
-                        'is_unique' => 'Post Slug already taken'
-                    ]
-                ],
-                'content' => [
-                    'rules' => 'required',
-                    'errors' => [
-                        'required' => 'Post content required'
-                    ]
-                ],
-                'category_name' => [
-                    'rules' => 'required|alpha_numeric_space|is_not_unique[categories.name]',
-                    'errors' => [
-                        'required' => 'Post category required',
-                        'alpha_numeric_space' => 'Post category should be a text',
-                        'is_not_unique' => 'Selected category does not exist'
-                    ]
-                ],
-                'meta_description' => [
-                    'rules' => 'required|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]|max_length[255]',
-                    'errors' => [
-                        'required' => 'Meta Description Required',
-                        'regex_match' => 'Meta Description should be valid text with allowed punctuation',
-                        'max_length' => 'Meta Description should be less than 255 characters'
-                    ]
-                ],
-                'thumbnail_caption' => [
-                    'rules' => 'max_length[200]|regex_match[/^[\p{L}\p{N}\s\-\.,:;!?"\'()]+$/u]',
-                    'errors' => [
-                        'max_length' => 'Post thumbnail caption should be less than 200 characters',
-                        'required' => 'Post thumbnail caption Required',
-                        'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation',
-                    ]
-                ],
-                'status' => [
-                    'rules' => 'required|alpha_dash|in_list[published,draft]',
-                    'errors' => [
-                        'required' => 'Post status Required',
-                        'alpha_dash' => 'Post status is not a valid string',
-                        'in_list' => 'Post status is not in list'
-                    ]
-                ],
-            ])
-        ) {
-            $validation = service('validation');
-            return redirect()->back()->withInput()->with('validation', $validation);
-        }
-
-        // Get the new data
-        $newData = [
-            'title' => $this->request->getPost('title'),
-            'meta_description' => $this->request->getPost('meta_description'),
-            'slug' => $this->request->getPost('slug'),
-            'content' => $this->request->getPost('content'),
-            'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
-            'category_id' => $this->categoryModel->getIdFromName($this->request->getPost('category_name')),
-            'status' => $this->request->getPost('status'),
-        ];
-
-        // Check if any changes were made
-        $changes = false;
-
-        // Compare title, content and category
-        foreach (['title', 'slug', 'content', 'category_id', 'meta_description', 'thumbnail_caption', 'status'] as $field) {
-            if ($oldData[$field] !== $newData[$field]) {
-                $changes = true;
+                ]);
             }
-        }
+            // IF Form request do not has thumbnail
+            else {
+                $this->validate([
+                    'title' => [
+                        'rules' => 'required|max_length[255]',
+                        'errors' => [
+                            'max_length' => 'Post Should be 255 chars or less',
+                            'required' => 'Post Title Required',
+                        ]
+                    ],
+                    'slug' => [
+                        'rules' => 'required|max_length[255]|regex_match[/^[a-z0-9]+(?:-[a-z0-9]+)*$/]|is_unique[posts.slug,id,' . $post_id . ']',
+                        'errors' => [
+                            'max_length' => 'Post Slug should be 255 chars or less',
+                            'required' => 'Post Slug Required',
+                            'regex_match' => 'Only lowercase letters, numbers, and hyphens allowed.',
+                            'is_unique' => '{value} already taken'
+                        ]
+                    ],
+                    'meta_description' => [
+                        'rules' => 'required|max_length[255]',
+                        'errors' => [
+                            'required' => 'Meta Description required',
+                            'max_length' => 'Meta Description should be less than 255 characters',
+                        ]
+                    ],
+                    'thumbnail_caption' => [
+                        'rules' => 'required|regex_match[/^[a-zA-Z0-9\s\-_.,!?()&:;"\']+$/]|max_length[255]',
+                        'errors' => [
+                            'required' => 'Post thumbnail caption Required',
+                            'regex_match' => 'Post thumbnail caption should be valid text with allowed punctuation'
+                        ]
+                    ],
+                    'content' => [
+                        'rules' => 'required|min_length[20]',
+                        'errors' => [
+                            'required' => 'Post content required',
+                            'min_length' => 'Post content should be at least 20 characters long'
+                        ]
+                    ],
+                    'category_id' => [
+                        'rules' => 'required|is_natural_no_zero|is_not_unique[categories.id]',
+                        'errors' => [
+                            'required' => 'Post category required',
+                            'is_natural_no_zero' => 'Post category id should be a number',
+                            'is_not_unique' => 'Selected category does not exist'
+                        ]
+                    ],
+                    'status' => [
+                        'rules' => 'required|alpha_dash|in_list[published,draft]',
+                        'errors' => [
+                            'required' => 'Post status Required',
+                            'alpha_dash' => 'Post status is not a valid string',
+                            'in_list' => 'Post status is not in list'
+                        ]
+                    ],
 
-        // Handle thumbnail upload from FilePond
-        $tempFileId = $this->request->getPost('temp_file_id');
-
-        if ($tempFileId) {
-            $newThumbnail = $this->moveFromTempToPermanent($tempFileId);
-
-            if ($newThumbnail) {
-                $changes = true;
-
-                // Delete old thumbnail if exists
-                $this->deleteOldThumbnail($oldData['thumbnail_path']);
-
-                $newData['thumbnail_path'] = $newThumbnail;
+                ]);
             }
+
+
+            if ($this->validation->run() === FALSE) {
+                $errors = $this->validation->getErrors();
+                log_message('error', 'Validation errors: ' . json_encode($errors));
+                return $this->response->setJSON([
+                    'status' => 0,
+                    'token' => csrf_hash(),
+                    'error' => $errors
+                ]);
+            } else {
+                if (isset($_FILES['thumbnail_path']) && !empty($_FILES['thumbnail_path']['name'])) {
+                    $path = 'uploads/thumbnails/';
+                    $file = $this->request->getFile('thumbnail_path');
+                    $filename = $file->getRandomName();
+
+                    $old_thumbnail_path = $this->postModel->asObject()->find($post_id)->thumbnail_path;
+                    if ($file->move($path, $filename)) {
+                        // Convert image to webp
+                        $this->image->withFile($path . $filename)
+                            ->convert(IMAGETYPE_WEBP)
+                            ->save($path . $filename);
+
+                        // Delete old thumbnail
+                        if ($old_thumbnail_path != null && file_exists($path . $old_thumbnail_path)) {
+                            unlink($path . $old_thumbnail_path);
+                        }
+                    }
+                    $post_update = $this->postModel->update($post_id, [
+                        'title' => $this->request->getPost('title', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                        'slug' => $this->request->getPost('slug'),
+                        'meta_description' => $this->request->getPost('meta_description', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                        'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
+                        'thumbnail_path' => $filename,
+                        'content' => $this->request->getPost('content'),
+                        'category_id' => $this->request->getPost('category_id'),
+                        'status' => $this->request->getPost('status')
+                    ]);
+
+                    if ($post_update) {
+                        log_message('info', 'Post updated successfully: ' . $post_id);
+                        return $this->response->setJson([
+                            'status' => 1,
+                            'msg' => 'Post updated successfully',
+                            'token' => csrf_hash()
+                        ]);
+                    } else {
+                        log_message('error', 'Failed to update post: ' . $post_id);
+                        return $this->response->setJson([
+                            'status' => 0,
+                            'msg' => 'Failed to update post',
+                            'token' => csrf_hash()
+                        ]);
+                    }
+
+
+                } else {
+                    $post_update = $this->postModel->update($post_id, [
+                        'title' => $this->request->getPost('title', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                        'slug' => $this->request->getPost('slug'),
+                        'meta_description' => $this->request->getPost('meta_description', FILTER_SANITIZE_FULL_SPECIAL_CHARS),
+                        'thumbnail_caption' => $this->request->getPost('thumbnail_caption'),
+
+                        'content' => $this->request->getPost('content'),
+                        'category_id' => $this->request->getPost('category_id'),
+                        'status' => $this->request->getPost('status')
+                    ]);
+
+                    if ($post_update) {
+                        log_message('info', 'Post updated successfully: ' . $post_id);
+                        return $this->response->setJson([
+                            'status' => 1,
+                            'msg' => 'Post updated successfully',
+                            'token' => csrf_hash()
+                        ]);
+                    } else {
+                        log_message('error', 'Failed to update post: ' . $post_id);
+                        return $this->response->setJson([
+                            'status' => 0,
+                            'msg' => 'Failed to update post',
+                            'token' => csrf_hash()
+                        ]);
+                    }
+
+                }
+            }
+
+
+        } else {
+            return $this->response->setJSON([
+                'status' => 0,
+                'msg' => 'Invalid request',
+                'token' => csrf_hash()
+            ]);
         }
 
-        // If no changes detected
-        if (!$changes) {
-            return redirect()->to('admin/posts')->with('info', 'No changes');
-        }
-
-
-
-        // Update the post
-        try {
-            $this->postModel->update($id, $newData);
-            return redirect()->to('admin/posts')->with('success', 'Post updated successfully');
-        } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Failed to update post: ' . $e->getMessage());
-        }
     }
 
     public function delete($id)
@@ -309,8 +469,10 @@ class PostController extends BaseController
 
         if ($post) {
             // Delete associated thumbnail
-            $this->deleteOldThumbnail($post['thumbnail_path']);
-
+            $thumbnail_path = 'uploads/thumbnails/' . $post['thumbnail_path'];
+            if (file_exists($thumbnail_path)) {
+                unlink($thumbnail_path);
+            }
             $this->postModel->delete($id);
 
             //flash message
@@ -320,38 +482,6 @@ class PostController extends BaseController
         }
     }
 
-    /**
-     * Move file from temp to permanent location
-     */
-    private function moveFromTempToPermanent($tempFileId)
-    {
-        $tempPath = FCPATH . 'uploads/temp/' . $tempFileId;
 
-        if (!file_exists($tempPath)) {
-            return null;
-        }
 
-        $finalPath = FCPATH . 'uploads/thumbnails/' . $tempFileId;
-
-        // Ensure thumbnails directory exists
-        if (!is_dir(FCPATH . 'uploads/thumbnails/')) {
-            mkdir(FCPATH . 'uploads/thumbnails/', 0755, true);
-        }
-
-        if (rename($tempPath, $finalPath)) {
-            return $tempFileId;
-        }
-
-        return null;
-    }
-
-    /**
-     * Delete old thumbnail file
-     */
-    private function deleteOldThumbnail($thumbnailPath)
-    {
-        if (!empty($thumbnailPath) && file_exists(FCPATH . 'uploads/thumbnails/' . $thumbnailPath)) {
-            unlink(FCPATH . 'uploads/thumbnails/' . $thumbnailPath);
-        }
-    }
 }

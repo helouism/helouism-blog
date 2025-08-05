@@ -12,7 +12,7 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\PageCache;
 use CodeIgniter\Filters\PerformanceMetrics;
 use CodeIgniter\Filters\SecureHeaders;
-use App\Filters\CssOptimizationFilter;
+
 use App\Filters\Throttle;
 
 class Filters extends BaseFilters
@@ -26,6 +26,7 @@ class Filters extends BaseFilters
      * [filter_name => classname]
      * or [filter_name => [classname1, classname2, ...]]
      */
+     
     public array $aliases = [
         'csrf' => CSRF::class,
         'toolbar' => DebugToolbar::class,
@@ -36,8 +37,9 @@ class Filters extends BaseFilters
         'forcehttps' => ForceHTTPS::class,
         'pagecache' => PageCache::class,
         'performance' => PerformanceMetrics::class,
-        'cssoptimization' => CssOptimizationFilter::class,
         'throttle' => Throttle::class,
+        'htmlminifier' => \App\Filters\HtmlMinifier::class,
+       
     ];
 
     /**
@@ -76,26 +78,20 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             'honeypot' => [
-                'except' => ['/', 'search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*']
+                'except' => ['/', 'search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'privacy-policy', 'terms-and-conditions']
             ],
-            'csrf' => [
-                'except' => [
-                    'admin/upload/process',
-                    'admin/upload/revert',
-                    'admin/upload/load',
-                ]
-            ],
+            'csrf',
             'invalidchars',
-            'session' => ['except' => ['search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'login*', '/', 'auth/a/*', 'logout']],
-
         ],
         'after' => [
+            'htmlminifier'  => [
+                'except' => ['admin/posts/*']
+            ],
             'honeypot' => [
-                'except' => ['/', 'search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*']
+                'except' => ['/', 'search', 'archive', 'archive/*', 'post/*', 'category-list', 'category/*', 'privacy-policy', 'terms-and-conditions']
             ],
             'secureheaders',
-            'cssoptimization'
-
+            
         ],
     ];
 

@@ -8,20 +8,19 @@
     <meta name="description" content="" />
     <meta name="author" content="" />
     <title><?= esc($title) ?></title>
+
+    <link rel="icon" href="<?= base_url('assets/img/favicon.ico') ?>" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="<?= base_url('assets/img/apple-touch-icon.png') ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= base_url('assets/img/favicon-32x32.png') ?>">
+    <link rel="icon" type="image/png" sizes="16x16" href="<?= base_url('assets/img/favicon-16x16.png') ?>">
+    <link rel="manifest" href="<?= base_url('assets/img/site.webmanifest') ?>">
+    
+
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <link href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css" rel="stylesheet" />
     <?php echo link_tag('assets/admin/css/styles.css'); ?>
-    <?php if ($title === 'Create Post' || $title === 'Edit Post'): ?>
-
-        <link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet" />
-
-    <?php endif; ?>
-    <link href="https://unpkg.com/filepond@^4/dist/filepond.css" rel="stylesheet" />
+  
     <?= $this->renderSection('pageStyles') ?>
-
-
-
-
 </head>
 
 <body class="sb-nav-fixed">
@@ -34,61 +33,22 @@
             <?= $this->include("admin/partials/footer") ?>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
         crossorigin="anonymous"></script>
 
     <?php echo script_tag('assets/admin/js/scripts.js'); ?>
 
-
     <script src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
         crossorigin="anonymous"></script>
-    <script src=""></script>
+    
     <?php echo script_tag('assets/admin/js/datatables-simple-demo.js'); ?>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-        integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <?php if ($title === 'Create Post' || $title === 'Edit Post'): ?>
-        <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-        <script src="https://unpkg.com/filepond@^4/dist/filepond.js"></script>
-        <!-- FilePond Image Resize Plugin -->
-        <script src="https://unpkg.com/filepond-plugin-image-resize/dist/filepond-plugin-image-resize.min.js"></script>
 
-        <!-- FilePond Image Transform Plugin -->
-        <script
-            src="https://unpkg.com/filepond-plugin-image-transform/dist/filepond-plugin-image-transform.min.js"></script>
-
-    <?php endif; ?>
-    <?php if (session()->getFlashdata('success')): ?>
-        <!-- Sweetalert success message -->
-        <script>
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                title: "Success",
-                showConfirmButton: false,
-                timer: 3000,
-                html: `<?= session()->getFlashdata('success') ?>`,
-                icon: "success"
-            });
-        </script>
-    <?php endif; ?>
-
-    <?php if (session()->getFlashdata('info')): ?>
-        <!-- Sweetalert error message -->
-        <script>
-            Swal.fire({
-                toast: true,
-                position: "top-end",
-                title: "Info",
-                showConfirmButton: false,
-                timer: 3000,
-                html: `<?= session()->getFlashdata('info') ?>`,
-                icon: "info"
-            });
-        </script>
-    <?php endif; ?>
+ 
     <?= $this->renderSection('scripts') ?>
 </body>
 

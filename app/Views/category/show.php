@@ -1,4 +1,22 @@
 <?= $this->extend('templates/layout') ?>
+<?= $this->section('pageStyles') ?>
+<style>
+    .hover-card {
+        transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .hover-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .display-4 {
+            font-size: 2.5rem;
+        }
+    }
+</style><?= $this->endSection() ?>
 <?= $this->section('content') ?>
 <!-- Category Header -->
 <div class="row mb-5">
@@ -7,6 +25,8 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb justify-content-center">
                 <li class="breadcrumb-item"><a href="<?= base_url('/') ?>" class="text-decoration-none">Home</a>
+                </li>
+                 <li class="breadcrumb-item"><a href="<?= base_url('category-list') ?>" class="text-decoration-none">Categories</a>
                 </li>
                 <li class="breadcrumb-item active" aria-current="page"><?= esc($category['name']) ?></li>
             </ol>
@@ -25,14 +45,14 @@
     <?php else: ?>
         <?php foreach ($posts as $post): ?>
             <div class="col-lg-4 col-md-6">
-                <div class="card h-100 shadow-sm hover-card">
+                <div class="card h-100 shadow-sm hover-card text-white bg-primary">
                     <?php if ($post['thumbnail_path']): ?>
                         <img loading="lazy" decoding="async" src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
                             class="card-img-top" alt="<?= esc($post['title']) ?>" style="height: 200px; object-fit: cover;">
                     <?php endif; ?>
                     <div class="card-body">
                         <h5 class="card-title">
-                            <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none stretched-link">
+                            <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none stretched-link text-white">
                                 <?= esc($post['title']) ?>
                             </a>
                         </h5>

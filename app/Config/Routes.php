@@ -9,8 +9,10 @@ use App\Controllers\Admin\DashboardController;
 /**
  * @var RouteCollection $routes
  */
+$routes->get('sitemap.xml', 'SitemapController::index');
 $routes->get('/', 'Home::index');
-
+$routes->get('privacy-policy', 'Home::privacy');
+$routes->get('terms-and-conditions', 'Home::terms');
 // Guest Routes
 $routes->get('search', 'SearchController::index');
 $routes->get('category-list', 'ListCategoryController::index');
@@ -26,11 +28,9 @@ $routes->group('admin', ['filter' => 'group:admin'], static function ($routes) {
     $routes->get('posts/create', 'Admin\PostController::create');
     $routes->post('posts/store', 'Admin\PostController::store');
     $routes->get('posts/edit/(:num)', 'Admin\PostController::edit/$1');
-    $routes->post('posts/update/(:num)', 'Admin\PostController::update/$1');
+    $routes->post('posts/update', 'Admin\PostController::update');
     $routes->get('posts/delete/(:num)', 'Admin\PostController::delete/$1');
-    $routes->post('upload/process', 'Admin\UploadController::process');
-    $routes->delete('upload/revert', 'Admin\UploadController::revert');
-    $routes->get('upload/load', 'Admin\UploadController::load');
+
 
     // Categories
     $routes->get('categories', 'Admin\CategoryController::index');

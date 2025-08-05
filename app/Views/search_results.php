@@ -18,13 +18,13 @@
         <?php if (!empty($search_results)): ?>
             <div class="search-results">
                 <?php foreach ($search_results as $post): ?>
-                    <div class="card mb-4 shadow-sm">
+                    <div class="card mb-4 shadow-sm text-white bg-dark">
                         <div class="row g-0">
                             <!-- Thumbnail Column -->
                             <div class="col-md-3">
                                 <?php if (!empty($post['thumbnail_path'])): ?>
                                     <img src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
-                                        class="img-fluid rounded-start h-100 object-fit-cover" alt="<?= esc($post['title']) ?>"
+                                        class="img-fluid rounded-start h-100 object-fit-contain" alt="<?= esc($post['title']) ?>"
                                         style="min-height: 200px;">
                                 <?php else: ?>
                                     <div class="bg-light rounded-start h-100 d-flex align-items-center justify-content-center"
@@ -36,15 +36,15 @@
 
                             <!-- Content Column -->
                             <div class="col-md-9">
-                                <div class="card-body h-100 d-flex flex-column">
+                                <div class="card-body bg-primary h-100 d-flex flex-column">
                                     <h5 class="card-title mb-3">
                                         <a href="<?= base_url('post/' . $post['slug']) ?>"
-                                            class="text-decoration-none text-primary">
-                                            <?= highlightSearchTerms(esc($post['title']), $query) ?>
+                                            class="text-decoration-none text-light">
+                                            <?= highlightSearchTerms(esc(data: $post['title']), $query) ?>
                                         </a>
                                     </h5>
 
-                                    <p class="card-text text-muted flex-grow-1">
+                                    <p class="card-text flex-grow-1">
                                         <?= highlightSearchTerms(strip_tags(truncateText($post['content'], 200)), $query) ?>
                                     </p>
 

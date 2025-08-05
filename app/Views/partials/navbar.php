@@ -1,6 +1,10 @@
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="<?php echo base_url("/") ?>">helouism</a>
+        <a class="navbar-brand" href="<?= base_url("/") ?>">
+            <img src="<?= base_url('assets/img/helouism-logo.png') ?>" alt="Helouism Logo" class="img-fluid"
+                style="max-height: 50px;">
+        </a>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -21,9 +25,9 @@
             <form method="get" action="<?= base_url('search') ?>" class="d-flex" id="searchForm" role="search">
                 <div class="input-group">
                     <input type="search" maxlength="150" name="q" placeholder="Search posts..." aria-label="Search"
-                        class="form-control" value="<?= old('q') ?: ($query ?? '') ?>" autocomplete="off">
+                        class="form-control me-sm-2" value="<?= old('q') ?: ($query ?? '') ?>" autocomplete="off">
 
-                    <button class="btn btn-outline-success" type="submit" aria-label="Search">
+                    <button class="btn btn-secondary my-2 my-sm-0" type="submit" aria-label="Search">
                         <i class="fas fa-search" aria-hidden="true"></i> Search
                     </button>
                 </div>
@@ -48,16 +52,3 @@
         </div>
     </div>
 </nav>
-
-<script>
-    // Optional: Auto-hide toast after 5 seconds
-    document.addEventListener('DOMContentLoaded', function () {
-        const toast = document.getElementById('searchErrorToast');
-        if (toast) {
-            setTimeout(() => {
-                const bsToast = new bootstrap.Toast(toast);
-                bsToast.hide();
-            }, 5000);
-        }
-    });
-</script>

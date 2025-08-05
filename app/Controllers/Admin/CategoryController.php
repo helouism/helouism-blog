@@ -20,7 +20,7 @@ class CategoryController extends BaseController
 
     public function index()
     {
-        $pager = \Config\Services::pager();
+        $pager = service('pager');
 
         $data = [
             'title' => 'Manage Categories',
@@ -38,7 +38,8 @@ class CategoryController extends BaseController
     {
         helper('form');
         $data = [
-            'title' => 'Create Category'
+            'title' => 'Create Category',
+            'validation' => service('validation')
         ];
         return view('admin/categories/create', $data);
     }
@@ -50,31 +51,34 @@ class CategoryController extends BaseController
     {
         helper('form');
 
-        $validation = $this->validate([
-            'name' => [
-                'rules' => 'required|max_length[150]|is_unique[categories.name]|alpha_numeric_space',
-                'errors' => [
-                    'required' => 'Category name required.',
-                    'is_unique' => 'Category name already exists',
-                    'max_length' => 'Category name too long',
-                    'alpha_numeric_space' => 'Category name should be a text'
-                ]
-            ],
-        ]);
-        if (!$validation) {
-            session()->setFlashdata('error', $this->validator->listErrors());
-            return redirect()->to(base_url('admin/categories/create'));
-        } else {
-            //insert data into database
-            $this->categoryModel->insert([
-                'name' => $this->request->getPost('name'),
-                'slug' => $this->categoryModel->setSlug($this->request->getPost('name')),
-            ]);
+        if (
+            !$this->validate([
+                'name' => [
+                    'rules' => 'required|max_length[150]|is_unique[categories.name]|alpha_numeric_space',
+                    'errors' => [
+                        'required' => 'Category name required.',
+                        'is_unique' => '{value} already exists',
+                        'max_length' => 'Category name too long',
+                        'alpha_numeric_space' => 'Category name should be a text'
+                    ]
+                ],
+            ])
+        ) {
 
-            //flash message
-            session()->setFlashdata('success', 'New category added');
-            return redirect()->to(base_url('admin/categories'));
+            $validation = service('validation');
+            return redirect()->back()->withInput()->with('validation', $validation);
         }
+
+        //insert data into database
+        $this->categoryModel->insert([
+            'name' => $this->request->getPost('name'),
+            'slug' => $this->categoryModel->setSlug($this->request->getPost('name')),
+        ]);
+
+        //flash message
+        session()->setFlashdata('success', 'New category added');
+        return redirect()->to(base_url('admin/categories'));
+
     }
 
     /**
@@ -92,7 +96,8 @@ class CategoryController extends BaseController
 
         $data = array(
             'title' => 'Edit Category',
-            'category' => $category
+            'category' => $category,
+            'validation' => service('validation')
         );
 
         return view('admin/categories/edit', $data);
@@ -107,35 +112,35 @@ class CategoryController extends BaseController
         $currentCategory = $this->categoryModel->find($id);
 
         //define validation
-        $validation = $this->validate([
-            'name' => [
-                'rules' => 'required|max_length[150]|alpha_numeric_space|is_unique[categories.name,id,' . $id . ']',
-                'errors' => [
-                    'required' => 'Category name required.',
-                    'is_unique' => 'Category name already exists',
-                    'max_length' => 'Category name too long',
-                    'alpha_numeric_space' => 'Category name should be a text'
-                ]
-            ],
+        if (
+            !$this->validate([
+                'name' => [
+                    'rules' => 'required|max_length[150]|alpha_numeric_space|is_unique[categories.name,id,' . $id . ']',
+                    'errors' => [
+                        'required' => 'Category name required.',
+                        'is_unique' => '{value} already exists',
+                        'max_length' => 'Category name too long',
+                        'alpha_numeric_space' => 'Category name should be a text'
+                    ]
+                ],
+            ])
+        ) {
+            $validation = service('validation');
+            return redirect()->back()->withInput()->with('validation', $validation);
+        }
+
+
+        //update data in database
+        $name = $this->request->getPost('name');
+        $this->categoryModel->update($id, [
+            'name' => $name,
+            'slug' => $this->categoryModel->setSlug($name),
         ]);
 
-        if (!$validation) {
-            //    Set error message
-            session()->setFlashdata('error', $this->validator->listErrors());
-            //render view with error validation message
-            return redirect()->to(base_url('admin/categories/edit/') . $id);
-        } else {
-            //update data in database
-            $name = $this->request->getPost('name');
-            $this->categoryModel->update($id, [
-                'name' => $name,
-                'slug' => $this->categoryModel->setSlug($name),
-            ]);
+        //flash message
+        session()->setFlashdata('success', 'Category updated');
+        return redirect()->to(base_url('admin/categories'));
 
-            //flash message
-            session()->setFlashdata('success', 'Category updated');
-            return redirect()->to(base_url('admin/categories'));
-        }
     }
 
     public function delete($id)

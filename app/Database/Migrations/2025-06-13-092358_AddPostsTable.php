@@ -17,26 +17,26 @@ class AddPostsTable extends Migration
             ],
             'title' => [
                 'type' => 'VARCHAR',
-                'constraint' => 150,  // Reduced
+                'constraint' => 200,  // Reduced
 
             ],
             'slug' => [
                 'type' => 'VARCHAR',
-                'constraint' => 150,
+                'constraint' => 200,
                 'unique' => true,
             ],
             'meta_description' => [
                 'type' => 'VARCHAR',
-                'constraint' => 255,
+                'constraint' => 220,
             ],
             'thumbnail_path' => [
                 'type' => 'VARCHAR',
-                'constraint' => 200,  // Reduced
+                'constraint' => 220,  // Reduced
                 'null' => false
             ],
             'thumbnail_caption' => [
                 'type' => 'VARCHAR',
-                'constraint' => 200,  // Reduced
+                'constraint' => 220,  // Reduced
                 'null' => false
             ],
             'content' => [

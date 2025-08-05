@@ -49,8 +49,11 @@
     <?= form_open('admin/categories/update/' . $category['id'], ['class' => 'needs-validation']) ?>
     <div class="mb-4">
         <label for="name" class="form-label text-sm fw-medium">Category Name</label>
-        <input type="text" class="form-control form-control-lg border-0 shadow-sm" name="name" id="name"
+        <input type="text" class="form-control form-control-lg border-0 shadow-sm <?= (validation_show_error('name')) ? 'is-invalid' : ''; ?>" name="name" id="name"
             value="<?= esc($category['name']) ?>" placeholder="Enter category name" required>
+            <div class="invalid-feedback">
+            <?= validation_show_error('name'); ?>
+        </div>
     </div>
 
     <div class="d-flex gap-2">

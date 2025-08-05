@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 
 <?= $this->include("partials/head") ?>
 
@@ -10,20 +10,30 @@
     </main>
 
     <?= $this->include("partials/footer") ?>
-    <script src="<?= base_url('assets/js/bootstrap/bootstrap.bundle.min.js') ?>"></script>
-    <?php echo script_tag('assets/js/theme-toggle.js'); ?>
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+        crossorigin="anonymous"></script>
     <script>
+
         document.addEventListener('DOMContentLoaded', function () {
-            var toastEl = document.getElementById('searchErrorToast');
-            if (toastEl) {
-                var toast = new bootstrap.Toast(toastEl);
-                toast.show();
+            const toast = document.getElementById('searchErrorToast');
+            if (toast) {
+                setTimeout(() => {
+                    const bsToast = new bootstrap.Toast(toast);
+                    bsToast.hide();
+                }, 5000);
             }
         });
     </script>
 
+   
 
-    <?= $this->renderSection("pageScripts") ?>
+
+     
+
+        
+   
+    <?= $this->renderSection("scripts") ?>
 </body>
 
 </html>

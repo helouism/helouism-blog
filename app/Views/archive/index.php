@@ -27,8 +27,8 @@
             </div>
         <?php else: ?>
             <?php foreach ($archive as $year => $months): ?>
-                <div class="card mb-4 shadow-sm">
-                    <div class="card-header bg-primary text-white">
+                <div class="card mb-4 shadow-sm text-white bg-dark">
+                    <div class="card-header">
                         <h2 class="h4 mb-0">
                             <i class="bi bi-calendar-event me-2"></i>
                             <?= esc($year) ?>
@@ -41,12 +41,12 @@
                                 <div class="col-md-6 col-lg-4 mb-3">
                                     <div class="d-grid">
                                         <a href="<?= base_url('archive/' . $year . '/' . $monthNum) ?>"
-                                            class="btn btn-outline-primary btn-lg d-flex justify-content-between align-items-center">
+                                            class="card-text text-white btn btn-outline-primary btn-lg d-flex justify-content-between align-items-center">
                                             <span>
                                                 <i class="bi bi-folder me-2"></i>
                                                 <?= esc($monthName) ?>
                                             </span>
-                                            <span class="badge bg-primary rounded-pill"><?= esc($count) ?></span>
+                                            <span class="badge bg-secondary rounded-pill"><?= esc($count) ?></span>
                                         </a>
                                     </div>
                                 </div>

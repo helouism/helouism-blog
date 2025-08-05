@@ -1,5 +1,5 @@
 <!-- Footer -->
-<footer class="text-center text-lg-start bg-body-tertiary text-muted">
+<footer class="text-center text-lg-start text-white bg-primary">
     <!-- Section: Social media -->
     <section class="d-flex justify-content-center justify-content-lg-between p-4 border-bottom">
         <!-- Left -->
@@ -30,9 +30,9 @@
                 <!-- Grid column -->
                 <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                     <!-- Content -->
-                    <h6 class="text-uppercase fw-bold mb-4">
+                    <p class="text-uppercase fw-bold mb-4">
                         <i class="bi bi-gem me-3"></i>Hendrik Louis Mahdi
-                    </h6>
+                    </p>
                     <p>
                         Fresh Graduate of Informatics Engineering at Pamulang University.
                         I excels in full stack web development using PHP, Python, and JavaScript and with
@@ -50,19 +50,17 @@
                     </h6>
                     <p>
                         <a href="https://helouism.github.io" class="text-reset">About Me</a>
+                        <br><br>
+                         <a href="<?php echo base_url("privacy-policy") ?>" class="text-reset">Privacy Policy</a>
+                         
+                         <br><br>
+                         <a href="<?php echo base_url("terms-and-conditions") ?>" class="text-reset">Terms & Conditions</a>
+                          <br><br>
+                         <a href="https://helouism.my.id/sitemap.xml" class="text-reset">Sitemap</a>
+                         
+                        
+                         
                     </p>
-                </div>
-                <!-- Grid column -->
-
-                <!-- Grid column -->
-                <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-                    <div class="d-flex align-items-center justify-content-center">
-                        <i class="bi bi-sun px-2"></i>
-                        <div class="form-check form-switch mb-0">
-                            <input class="form-check-input" type="checkbox" id="darkModeSwitch">
-                        </div>
-                        <i class="bi bi-moon px-2"></i>
-                    </div>
                 </div>
                 <!-- Grid column -->
 
@@ -87,7 +85,7 @@
 
     <!-- Copyright -->
     <div class="text-center p-4" style="background-color: rgba(0, 0, 0, 0.05);">
-        © <?php echo date('Y') ?> helouism's Blog
+        © <?php echo date('Y') ?> helouism
 
     </div>
     <!-- Copyright -->

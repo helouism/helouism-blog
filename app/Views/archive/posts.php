@@ -4,8 +4,8 @@
 <div class="row mb-5">
     <div class="col-12">
         <h1 class="display-4 fw-bold">Archive: <?= esc($monthName) ?> <?= esc($year) ?></h1>
-        <nav aria-label="breadcrumb">
-            <ol class="breadcrumb">
+        <nav aria-label="breadcrumb ">
+            <ol class="breadcrumb justify-content-center">
                 <li class="breadcrumb-item">
                     <a href="<?= base_url('/') ?>" class="text-decoration-none">Home</a>
                 </li>
@@ -30,7 +30,7 @@
             </div>
         <?php else: ?>
             <?php foreach ($posts as $post): ?>
-                <div class="card mb-4 post-card">
+                <div class="card mb-4 text-white bg-primary">
                     <div class="row g-0">
                         <?php if ($post['thumbnail_path']): ?>
                             <div class="col-md-4">
@@ -38,14 +38,14 @@
                                     <img loading="lazy" decoding="async"
                                         src="<?= base_url('uploads/thumbnails/' . $post['thumbnail_path']) ?>"
                                         class="img-fluid rounded-start h-100" alt="<?= esc($post['title']) ?>"
-                                        style="object-fit: cover;">
+                                        style="object-fit: contain;">
                                 </a>
                             </div>
                         <?php endif; ?>
                         <div class="<?= $post['thumbnail_path'] ? 'col-md-8' : 'col-12' ?>">
                             <div class="card-body">
                                 <h2 class="card-title h4">
-                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none"
+                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="text-decoration-none text-white"
                                         target="_blank">
                                         <?= esc($post['title']) ?>
                                     </a>
@@ -63,7 +63,7 @@
                                         <span class="ms-3"><i class="bi bi-person"></i> <?= esc($post['username']) ?></span>
 
                                     </div>
-                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-outline-primary"
+                                    <a href="<?= base_url('post/' . $post['slug']) ?>" class="btn btn-sm btn-dark"
                                         target="_blank">
                                         Read More
                                     </a>
@@ -83,59 +83,33 @@
 
     <!-- Sidebar -->
     <div class="col-lg-4">
-        <!-- Categories Widget -->
-        <div class="sidebar-widget categories-widget">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="h5 mb-0">Categories</h3>
-                </div>
-                <div class="card-body">
-                    <ul class="list-unstyled categories-list mb-0">
-                        <?php foreach ($categories as $category): ?>
-                            <li class="mb-2">
-                                <a href="<?= base_url('category/' . $category['slug']) ?>"
-                                    class="text-decoration-none d-flex justify-content-between align-items-center">
-                                    <span><i class="bi bi-folder me-2"></i><?= esc($category['name']) ?></span>
-                                </a>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
+       
         <!-- Archive Widget -->
-        <div class="sidebar-widget archive-widget mt-4">
-            <div class="card">
-                <div class="card-header bg-info text-white">
-                    <h3 class="h5 mb-0">Archive</h3>
+        <div class="sidebar-widget mt-4">
+            <div class="card text-white bg-dark">
+                <div class="card-header">
+                    <h3 class="h5 mb-0">Post Archive</h3>
                 </div>
                 <div class="card-body">
                     <div class="accordion" id="archiveAccordion">
-                        <?php foreach ($archive as $archiveYear => $months): ?>
+                        <?php foreach ($archive as $year => $months): ?>
                             <div class="accordion-item">
-                                <h2 class="accordion-header" id="heading-archive-<?= $archiveYear ?>">
-                                    <button class="accordion-button <?= $archiveYear != $year ? 'collapsed' : '' ?>"
-                                        type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse-archive-<?= $archiveYear ?>"
-                                        aria-expanded="<?= $archiveYear == $year ? 'true' : 'false' ?>"
-                                        aria-controls="collapse-archive-<?= $archiveYear ?>">
-                                        <?= $archiveYear ?>
+                                <h2 class="accordion-header" id="heading-archive-<?= $year ?>">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapse-archive-<?= $year ?>" aria-expanded="false"
+                                        aria-controls="collapse-archive-<?= $year ?>">
+                                        <?= $year ?>
                                     </button>
                                 </h2>
-                                <div id="collapse-archive-<?= $archiveYear ?>"
-                                    class="accordion-collapse collapse <?= $archiveYear == $year ? 'show' : '' ?>"
-                                    aria-labelledby="heading-archive-<?= $archiveYear ?>"
-                                    data-bs-parent="#archiveAccordion">
+                                <div id="collapse-archive-<?= $year ?>" class="accordion-collapse collapse"
+                                    aria-labelledby="heading-archive-<?= $year ?>" data-bs-parent="#archiveAccordion">
                                     <div class="accordion-body p-2">
                                         <ul class="list-unstyled mb-0">
                                             <?php foreach ($months as $monthNum => $count):
-                                                $monthName = date('F', mktime(0, 0, 0, $monthNum, 10));
-                                                $isActive = ($archiveYear == $year && $monthNum == $month); ?>
+                                                $monthName = date('F', mktime(0, 0, 0, $monthNum, 10)); ?>
                                                 <li>
-                                                    <a href="<?= base_url('archive/' . $archiveYear . '/' . $monthNum) ?>"
-                                                        class="text-decoration-none d-flex justify-content-between align-items-center <?= $isActive ? 'fw-bold text-primary' : '' ?>"
-                                                        target="_blank">
+                                                    <a href="<?= base_url('archive/' . $year . '/' . $monthNum) ?>"
+                                                        class="text-decoration-none text-white d-flex justify-content-between align-items-center">
                                                         <span><?= $monthName ?></span>
                                                         <span class="badge bg-info rounded-pill ms-2"><?= $count ?></span>
                                                     </a>
@@ -150,6 +124,7 @@
                 </div>
             </div>
         </div>
+        <!-- End Archive Widget -->
     </div>
 </div>
 

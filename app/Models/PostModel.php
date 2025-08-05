@@ -154,9 +154,82 @@ class PostModel extends Model
         return $searchResults;
     }
 
+    // New methods for sitemap functionality
+
+    /**
+     * Get posts data for sitemap generation
+     * Only selects necessary fields to reduce memory usage
+     */
+    public function getSitemapPosts(): array
+    {
+        $cacheKey = 'sitemap_posts';
+        $cache = service('cache');
+
+        $posts = $cache->get($cacheKey);
+        if ($posts === null) {
+            $posts = $this->select('slug, created_at')
+                ->where('status', 'published')
+                ->orderBy('created_at', 'DESC')
+                ->findAll();
+
+            // Cache for 30 minutes
+            $cache->save($cacheKey, $posts, 1800);
+        }
+
+        return $posts;
+    }
+
+    /**
+     * Get unique year-month combinations from posts for archive URLs
+     * This replaces the direct database query in the controller
+     */
+    public function getArchiveUrls(): array
+    {
+        $cacheKey = 'sitemap_archives';
+        $cache = service('cache');
+
+        $archives = $cache->get($cacheKey);
+        if ($archives === null) {
+            $builder = $this->builder();
+            $archives = $builder->select('YEAR(created_at) as year, MONTH(created_at) as month')
+                ->where('status', 'published')
+                ->groupBy('YEAR(created_at), MONTH(created_at)')
+                ->orderBy('year', 'DESC')
+                ->orderBy('month', 'DESC')
+                ->get()
+                ->getResultArray();
+
+            // Cache for 30 minutes
+            $cache->save($cacheKey, $archives, 1800);
+        }
+
+        return $archives;
+    }
+
+    /**
+     * Get the latest post creation date for sitemap lastmod
+     * This helps with sitemap cache invalidation
+     */
+    public function getLatestPostDate(): string
+    {
+        $result = $this->select('MAX(created_at) as latest_date')
+            ->where('status', 'published')
+            ->first();
+
+        return $result['latest_date'] ?? date('Y-m-d H:i:s');
+    }
+
     protected function clearSearchCache(array $data)
     {
-        $cache = \Config\Services::cache();
+        $cache = service('cache');
+
+        // Clear all cache including sitemap cache when posts are modified
+        $cache->delete('sitemap_xml');
+        $cache->delete('sitemap_posts');
+        $cache->delete('sitemap_archives');
+        $cache->delete('sitemap_categories');
+
+        // Clear general cache
         $cache->clean();
     }
 }
