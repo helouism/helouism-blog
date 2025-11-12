@@ -6,39 +6,39 @@ use CodeIgniter\Config\BaseConfig;
 
 class Email extends BaseConfig
 {
-    public string $fromEmail = '';
-    public string $fromName = '';
-    public string $recipients = '';
+    public string $fromEmail = "";
+    public string $fromName = "";
+    public string $recipients = "";
 
     /**
      * The "user agent"
      */
-    public string $userAgent = 'CodeIgniter';
+    public string $userAgent = "CodeIgniter";
 
     /**
      * The mail sending protocol: mail, sendmail, smtp
      */
-    public string $protocol = 'smtp';
+    public string $protocol = "smtp";
 
     /**
      * The server path to Sendmail.
      */
-    public string $mailPath = '/usr/sbin/sendmail';
+    public string $mailPath = "/usr/sbin/sendmail";
 
     /**
      * SMTP Server Hostname
      */
-    public string $SMTPHost = '';
+    public string $SMTPHost = "";
 
     /**
      * SMTP Username
      */
-    public string $SMTPUser = '';
+    public string $SMTPUser = "";
 
     /**
      * SMTP Password
      */
-    public string $SMTPPass = '';
+    public string $SMTPPass = "";
 
     /**
      * SMTP Port
@@ -62,7 +62,7 @@ class Email extends BaseConfig
      *             to the server. 'ssl' means implicit SSL. Connection on port
      *             465 should set this to ''.
      */
-    public string $SMTPCrypto = 'tls';
+    public string $SMTPCrypto = "tls";
 
     /**
      * Enable word-wrap
@@ -77,12 +77,12 @@ class Email extends BaseConfig
     /**
      * Type of mail, either 'text' or 'html'
      */
-    public string $mailType = 'text';
+    public string $mailType = "text";
 
     /**
      * Character set (utf-8, iso-8859-1, etc.)
      */
-    public string $charset = 'UTF-8';
+    public string $charset = "UTF-8";
 
     /**
      * Whether to validate the email address
@@ -124,12 +124,12 @@ class Email extends BaseConfig
         parent::__construct();
 
         // Load email configuration from environment variables
-        $this->fromEmail = env('email.fromEmail');
-        $this->fromName = env('email.fromName');
-        $this->SMTPHost = env('email.SMTPHost');
-        $this->SMTPUser = env('email.SMTPUser');
-        $this->SMTPPass = env('email.SMTPPass');
-        $this->SMTPPort = env('email.SMTPPort');
-        $this->SMTPCrypto = env('email.SMTPCrypto');
+        $this->fromEmail = env("email.fromEmail");
+        $this->fromName = env("email.fromName");
+        $this->SMTPHost = env("email.SMTPHost");
+        $this->SMTPUser = env("email.SMTPUser");
+        $this->SMTPPass = env("email.SMTPPass");
+        $this->SMTPPort = env("email.SMTPPort");
+        $this->SMTPCrypto = env("email.SMTPCrypto");
     }
 }
