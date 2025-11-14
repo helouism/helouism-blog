@@ -9,6 +9,7 @@ use App\Controllers\Admin\DashboardController;
 /**
  * @var RouteCollection $routes
  */
+
 $routes->get('sitemap.xml', 'SitemapController::index');
 $routes->get('/', 'Home::index');
 $routes->get('privacy-policy', 'Home::privacy');
@@ -23,6 +24,13 @@ $routes->get('archive/(:num)/(:num)', 'ArchiveController::show/$1/$2');
 
 $routes->group('admin', ['filter' => 'group:admin'], static function ($routes) {
     $routes->get('', 'Admin\DashboardController::index');
+
+    // Profile
+    $routes->get('profile', 'Admin\ProfileController::index');
+    $routes->post('profile/updateProfile', 'Admin\ProfileController::updateProfile');
+    $routes->post('profile/changePassword', 'Admin\ProfileController::changePassword');
+
+
     // Posts
     $routes->get('posts', 'Admin\PostController::index');
     $routes->get('posts/create', 'Admin\PostController::create');

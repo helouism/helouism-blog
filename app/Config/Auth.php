@@ -434,14 +434,35 @@ class Auth extends ShieldAuth
      * Returns the URL that a user should be redirected
      * to after a successful login.
      */
-    public function loginRedirect(): string
-    {
-        $url = auth()->user()->inGroup('admin')
-            ? '/admin'
-            : setting('Auth.redirects')['login'];
+   public function loginRedirect(): string
+{
+    $user = auth()->user();
 
-        return $this->getUrl($url);
+   
+    if ($user === null) {
+        return $this->getUrl(route_to('login'));
     }
+
+    
+    if (! $user->isActivated()) {
+        auth()->logout();
+        session()->setFlashdata('error', 'Your account is not activated yet.');
+
+        return $this->getUrl(route_to('login')); // back to login page
+    }
+
+    
+    if (! $user->inGroup('admin')) {
+        auth()->logout();
+        session()->setFlashdata('error', 'You are not allowed to login with this account.');
+
+        return $this->getUrl(route_to('login')); // back to login page
+    }
+
+    
+    return $this->getUrl('/admin');
+}
+
     /**
      * Returns the URL that a user should be redirected
      * to after they are logged out.
